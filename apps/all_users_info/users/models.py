@@ -1,30 +1,22 @@
-from django.contrib.auth.models import AbstractUser, PermissionsMixin
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db import models
 
+from apps.all_users_info.users.choices import RoleType
 from apps.all_users_info.users.managers import UserManager
+
 from core.models import BaseModel
 
 
-class UserModel(AbstractUser, BaseModel, PermissionsMixin):
+class UserModel(AbstractBaseUser, BaseModel, PermissionsMixin):
     class Meta:
         db_table = 'auth_users'
 
     email = models.EmailField(unique=True)
-    status = models.BooleanField(default=False)
-    is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
+    role_type = models.CharField(choices=RoleType.choices, max_length=20)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
     objects = UserManager()
 
-
-class ProfileModel(BaseModel):
-    class Meta:
-        db_table = 'profiles'
-
-    name = models.CharField(max_length=100)
-    surname = models.CharField(max_length=100)
-    phone = models.CharField(max_length=100)
-    age = models.IntegerField(default=0)
-    user = models.OneToOneField(UserModel, on_delete=models.CASCADE, related_name='profiles')

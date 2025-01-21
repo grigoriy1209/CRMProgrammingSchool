@@ -3,8 +3,11 @@
 import os
 import sys
 
+import dotenv
+
 
 def main():
+    dotenv.read_dotenv()
     """Run administrative tasks."""
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'configs.settings')
     try:
@@ -12,7 +15,7 @@ def main():
     except ImportError as exc:
         raise ImportError(
             "Couldn't import Django. Are you sure it's installed and "
-            "available on your PYTHONPATH environment variable? Did you "
+            "available on your PYTHON PATH environment variable? Did you "
             "forget to activate a virtual environment?"
         ) from exc
     execute_from_command_line(sys.argv)
