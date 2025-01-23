@@ -9,7 +9,7 @@ from apps.all_users_info.users.serializers import UserSerializer
 class UserCreateView(CreateAPIView):
     serializer_class = UserSerializer
     queryset = UserModel.objects.all()
-    permission_classes = (IsSuperUser,)
+    permission_classes = (AllowAny,)
 
 
 class UserRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
