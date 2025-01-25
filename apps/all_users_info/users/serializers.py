@@ -1,3 +1,6 @@
+from django.db import transaction
+from django.db.transaction import atomic
+
 from rest_framework import serializers
 
 from apps.all_users_info.users.models import ProfileModel, UserModel
@@ -41,6 +44,7 @@ class UserSerializer(serializers.ModelSerializer):
             'password': {"write_only": True},
         }
 
+    @atomic
     def create(self, validated_data):
         profile_data = validated_data.pop('profile')
 
@@ -48,3 +52,19 @@ class UserSerializer(serializers.ModelSerializer):
         profile = ProfileModel.objects.create(**profile_data, user=user)
         user.save()
         return user
+
+    @transaction.atomic
+    def update(self, instance, validated_data):
+        if 'password' in validated_data:
+            password = validated_data.pop('password')
+            instance.set_password(password)
+
+        profile_data = validated_data.pop('profile')
+        if profile_data:
+            profile_instance = instance.profile
+            for attr, value in profile_data.items():
+                setattr(profile_instance, attr, value)
+            profile_instance.save()
+
+        instance.save()
+        return instance
