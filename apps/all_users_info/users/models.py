@@ -14,7 +14,7 @@ class UserModel(AbstractBaseUser, BaseModel, PermissionsMixin):
     email = models.EmailField(unique=True)
     is_active = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
-    role_type = models.CharField(choices=RoleType.choices, max_length=20, default=RoleType.MANAGER)
+    role_type = models.CharField(choices=RoleType.choices, max_length=20, default=RoleType.OWNER)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
