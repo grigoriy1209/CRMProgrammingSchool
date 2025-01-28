@@ -22,22 +22,21 @@ from rest_framework.permissions import AllowAny
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 
-# schema_view = get_schema_view(
-#     openapi.Info(
-#         title="CRMProgrammingSchool API",
-#         default_version='v1',
-#         description="Management API for CRMProgrammingSchool",
-#
-#         contact=openapi.Contact(email="grigoriyv1209@gmail.com"),
-#
-#     ),
-#     public=True,
-#     permission_classes=(AllowAny,),
-# )
+schema_view = get_schema_view(
+    openapi.Info(
+        title="CRMProgrammingSchool API",
+        default_version='v1',
+        description="Management API for CRMProgrammingSchool",
+        contact=openapi.Contact(email="grigoriyv1209@gmail.com"),
+    ),
+    public=True,
+    permission_classes=[AllowAny,],
+)
 urlpatterns = [
     path('api/all_users/users', include('apps.all_users_info.users.urls')),
     path('api/all_users/auth', include('apps.all_users_info.auth.urls')),
     path('api/all_users/admins', include('apps.all_users_info.admins.urls')),
-    # path('api/doc', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    path('api/application', include('apps.applications.urls')),
+    path('api/doc', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
 
 ]

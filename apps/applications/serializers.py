@@ -1,13 +1,16 @@
+
+
 from rest_framework import serializers
 
-from apps.applications.models import ApplicationModels
+from apps.applications.models import OrderModels
 
 
 class ApplicationSerializer(serializers.ModelSerializer):
     class Meta:
-        model = ApplicationModels
+        model = OrderModels
 
         fields = (
+            'id',
             'name',
             'surname',
             'email',
@@ -22,3 +25,9 @@ class ApplicationSerializer(serializers.ModelSerializer):
             'created_at',
         )
         read_only_fields = ('id', 'created_at')
+
+    def create(self, validated_data:dict):
+        application = OrderModels.objects.create(**validated_data)
+        return application
+
+

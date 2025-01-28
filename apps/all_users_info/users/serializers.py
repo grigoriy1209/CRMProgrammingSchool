@@ -53,7 +53,7 @@ class UserSerializer(serializers.ModelSerializer):
         user.save()
         return user
 
-    @transaction.atomic
+    @atomic
     def update(self, instance, validated_data):
         if 'password' in validated_data:
             password = validated_data.pop('password')
