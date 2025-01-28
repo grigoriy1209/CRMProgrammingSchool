@@ -21,6 +21,8 @@ class ApplicationSerializer(serializers.ModelSerializer):
             'course_format',
             'status',
             'sum',
+            'msg',
+            "utm",
             'alreadyPaid',
             'created_at',
         )

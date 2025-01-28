@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
@@ -15,20 +14,27 @@ class Migration(migrations.Migration):
             name='OrderModels',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(blank=True, max_length=25, null=True)),
-                ('surname', models.CharField(blank=True, max_length=25, null=True)),
-                ('email', models.EmailField(blank=True, max_length=100, null=True)),
-                ('phone', models.CharField(blank=True, max_length=12, null=True)),
-                ('age', models.IntegerField(blank=True, null=True)),
-                ('course', models.CharField(blank=True, choices=[('FX', 'Fx'), ('QACX', 'Qacx'), ('JCX', 'Jcx'), ('JSCX', 'Jscx'), ('FE', 'Fe'), ('PCX', 'Pcx')], max_length=10, null=True)),
-                ('course_format', models.CharField(blank=True, choices=[('static', 'Static'), ('online', 'Online')], max_length=15, null=True)),
-                ('course_type', models.CharField(blank=True, choices=[('pro', 'Pro'), ('minimal', 'Minimal'), ('premium', 'Premium'), ('incubator', 'Incubator'), ('vip', 'Vip')], max_length=100, null=True)),
-                ('sum', models.IntegerField(blank=True, null=True)),
-                ('alreadyPaid', models.IntegerField(blank=True, null=True)),
-                ('created_at', models.DateTimeField(blank=True, null=True)),
-                ('utm', models.CharField(blank=True, max_length=100, null=True)),
-                ('msg', models.CharField(blank=True, max_length=100, null=True)),
-                ('status', models.CharField(blank=True, choices=[('InWork', 'InWork'), ('New', 'New'), ('Aggre', 'Aggre'), ('Disaggre', 'Disaggre'), ('Dubing', 'Dubing')], max_length=15, null=True)),
+                ('name', models.CharField(max_length=25, )),
+                ('surname', models.CharField(max_length=25, )),
+                ('email', models.EmailField(max_length=100, )),
+                ('phone', models.CharField(max_length=12, )),
+                ('age', models.IntegerField()),
+                ('course', models.CharField(
+                    choices=[('FX', 'Fx'), ('QACX', 'Qacx'), ('JCX', 'Jcx'), ('JSCX', 'Jscx'), ('FE', 'Fe'),
+                             ('PCX', 'Pcx')], max_length=10, )),
+                ('course_format',
+                 models.CharField(choices=[('static', 'Static'), ('online', 'Online')], max_length=15, )),
+                ('course_type', models.CharField(
+                    choices=[('pro', 'Pro'), ('minimal', 'Minimal'), ('premium', 'Premium'), ('incubator', 'Incubator'),
+                             ('vip', 'Vip')], max_length=100, )),
+                ('sum', models.IntegerField()),
+                ('alreadyPaid', models.IntegerField()),
+                ('created_at', models.DateTimeField()),
+                ('utm', models.CharField(max_length=100, )),
+                ('msg', models.CharField(max_length=100, )),
+                ('status', models.CharField(
+                    choices=[('InWork', 'InWork'), ('New', 'New'), ('Aggre', 'Aggre'), ('Disaggre', 'Disaggre'),
+                             ('Dubing', 'Dubing')], max_length=15, )),
             ],
             options={
                 'db_table': 'orders',

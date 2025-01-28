@@ -15,7 +15,6 @@ from core.pagination import PagePagination
 class ApplicationListCreateView(GenericAPIView):
     serializer_class = ApplicationSerializer
     queryset = OrderModels.objects.all()
-    filter_backends = (DjangoFilterBackend,)
     filterset_class = ApplicateFilter
     pagination_class = PagePagination
     permission_classes = (AllowAny,)

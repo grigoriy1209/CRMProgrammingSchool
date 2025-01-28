@@ -25,8 +25,7 @@ class UserRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
     serializer_class = UserSerializer
     queryset = UserModel.objects.all()
     permission_classes = (AllowAny,)
-    filter_backends = [DjangoFilterBackend, ]
-    filter_fields = ['id', ]
+
 
 
 class TestEmail(GenericAPIView):

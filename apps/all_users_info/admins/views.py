@@ -47,45 +47,45 @@ class UserUnBanView(GenericAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class UserToManagerView(GenericAPIView):
-    permission_classes = (IsSuperUser,)
-    queryset = UserModel.objects.all()
-    serializer_class = UserSerializer
-
-    def get_queryset(self):
-        return super().get_queryset().exclude(id=self.request.user.id)
-
-    def patch(self, *args, **kwargs):
-        user = self.get_object()
-
-        if not user.is_staff:
-            user.is_staff = True
-
-        if not user.role_type == RoleType.OWNER:
-            user.role_type = RoleType.MANAGER
-
-            user.save()
-        serializer = UserSerializer(user)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-class ManagerToUserView(GenericAPIView):
-    permission_classes = (IsSuperUser,)
-    queryset = UserModel.objects.all()
-    serializer_class = UserSerializer
-
-    def get_queryset(self):
-        return super().get_queryset().exclude(id=self.request.user.id)
-
-    def patch(self, *args, **kwargs):
-        user = self.get_object()
-
-        if user.is_staff:
-            user.is_staff = False
-
-        if user.role_type == RoleType.MANAGER:
-            user.role_type = RoleType.OWNER
-
-            user.save()
-        serializer = UserSerializer(user)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+# class UserToManagerView(GenericAPIView):
+#     permission_classes = (IsSuperUser,)
+#     queryset = UserModel.objects.all()
+#     serializer_class = UserSerializer
+#
+#     def get_queryset(self):
+#         return super().get_queryset().exclude(id=self.request.user.id)
+#
+#     def patch(self, *args, **kwargs):
+#         user = self.get_object()
+#
+#         if not user.is_staff:
+#             user.is_staff = True
+#
+#         if not user.role_type == RoleType.:
+#             user.role_type = RoleType.MANAGER
+#
+#             user.save()
+#         serializer = UserSerializer(user)
+#         return Response(serializer.data, status=status.HTTP_200_OK)
+#
+#
+# class ManagerToUserView(GenericAPIView):
+#     permission_classes = (IsSuperUser,)
+#     queryset = UserModel.objects.all()
+#     serializer_class = UserSerializer
+#
+#     def get_queryset(self):
+#         return super().get_queryset().exclude(id=self.request.user.id)
+#
+#     def patch(self, *args, **kwargs):
+#         user = self.get_object()
+#
+#         if user.is_staff:
+#             user.is_staff = False
+#
+#         if user.role_type == RoleType.MANAGER:
+#             user.role_type = RoleType.OWNER
+#
+#             user.save()
+#         serializer = UserSerializer(user)
+#         return Response(serializer.data, status=status.HTTP_200_OK)
