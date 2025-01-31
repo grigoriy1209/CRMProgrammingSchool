@@ -34,9 +34,4 @@ class UserRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
     permission_classes = (IsSuperUser,)
 
 
-class TestEmail(GenericAPIView):
-    permission_classes = (AllowAny,)
 
-    def get(self, *args, **kwargs):
-        EmailService.send_test()
-        return Response('Email sent successfully', status=status.HTTP_200_OK)
