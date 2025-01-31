@@ -13,6 +13,10 @@ from core.pagination import PagePagination
 
 
 class ApplicationListCreateView(GenericAPIView):
+    """
+        get:info all applications
+        post:create order
+    """
     serializer_class = ApplicationSerializer
     queryset = OrderModels.objects.all()
     filterset_class = ApplicateFilter

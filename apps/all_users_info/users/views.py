@@ -1,11 +1,9 @@
 from django.contrib.auth import get_user_model
 
 from rest_framework import status
-from rest_framework.generics import CreateAPIView, GenericAPIView, ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import CreateAPIView, GenericAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
-
-from django_filters.rest_framework import DjangoFilterBackend
 
 from apps.all_users_info.users.serializers import UserSerializer
 
@@ -16,13 +14,21 @@ from core.services.email_service import EmailService
 UserModel: User = get_user_model()
 
 
-class UserCreateView(ListCreateAPIView):
+class UserCreateView(CreateAPIView):
+    """
+        post:create user
+    """
     serializer_class = UserSerializer
     queryset = UserModel.objects.all()
     permission_classes = (IsSuperUser,)
 
 
 class UserRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
+    """
+        put:update user
+        patch:partial update user
+        delete:delete user
+   """
     serializer_class = UserSerializer
     queryset = UserModel.objects.all()
     permission_classes = (IsSuperUser,)
