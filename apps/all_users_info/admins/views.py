@@ -4,7 +4,6 @@ from rest_framework import status
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 
-from apps.all_users_info.users.choices import RoleType
 from apps.all_users_info.users.serializers import UserSerializer
 
 from core.dataclasses.user_dataclass import User
@@ -45,7 +44,6 @@ class UserUnBanView(GenericAPIView):
             user.save()
         serializer = UserSerializer(user)
         return Response(serializer.data, status=status.HTTP_200_OK)
-
 
 # class UserToManagerView(GenericAPIView):
 #     permission_classes = (IsSuperUser,)

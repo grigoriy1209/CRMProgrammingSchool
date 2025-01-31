@@ -21,6 +21,5 @@ class OrderModels(models.Model):
     sum = models.IntegerField()
     alreadyPaid = models.IntegerField(default=0,)
     created_at = models.DateTimeField(default=timezone.now)
-    utm = models.CharField(max_length=100,)
-    msg = models.CharField(max_length=100, )
+
     status = models.CharField(max_length=15, choices=StatusType.choices,)
