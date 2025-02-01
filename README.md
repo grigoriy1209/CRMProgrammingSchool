@@ -1,39 +1,37 @@
-CRM Programming School that helps manage students, teachers, courses, and financial transactions.
+**CRM Programming School that helps manage students, teachers, courses, and financial transactions.**
 
-Technologies
+# Technologies
 
-Django - web framework for Python used to build the backend.
+**Django - web framework for Python used to build the backend.**
 
-Django Rest Framework - For building RESTful APIs.
+**Django Rest Framework - For building RESTful APIs.**
 
-MySQL - A relational database for storing data about users, cars, and other resources.
+**MySQL - A relational database for storing data about users, cars, and other resources.**
 
-drf-yasg - For automatically generating API documentation.
+**drf-yasg - For automatically generating API documentation.**
 
-Installation
+# Installation
 
-Requirements:
+# Requirements:
 
-Python 3.12+     
-Poetry for dependency management.
+**Python 3.12+**     
+**Poetry for dependency management.**
 
-Setup Steps:
+## Setup Steps:
 
-Clone the repository:
+### Clone the repository:
 
-git clone https://github.com/grigoriy1209/CRMProgrammingSchool.git
+**git clone** `https://github.com/grigoriy1209/CRMProgrammingSchool.git`
 
-cd crmprogrammingschool
+**cd crmprogrammingschool**
 
-Install dependencies:
+# Install dependencies:
 
-poetry install
+**poetry install**
 
+## Set up environment variables(create a .env file):
 
-
-Set up environment variables(create a .env file):
-
-DEBUG=True 
+DEBUG=True
 
 SECRET_KEY=
 
@@ -47,13 +45,12 @@ MYSQL_HOST=
 
 MYSQL_PORT=
 
-Apply database migrations:
+# Apply database migrations:
+**poetry run python manage.py migrate**
 
-poetry run python manage.py migrate
+# Run the development server:
 
-Run the development server:
-
-poetry run manage.py runserver
+**poetry run manage.py runserver**
 
 Importing Postman Collection
 
@@ -92,4 +89,3 @@ authentication: /api/all_users/auth
 Applications
 
 all_application: /api/application
-
