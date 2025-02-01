@@ -80,7 +80,16 @@ Development dependencies:
 isort
 
 API Endpoints
+
 Users
+
 all_users: /api/all_users/users
+
 admins: /api/all_users/admins
+
 authentication: /api/all_users/auth
+
+Applications
+
+all_application: /api/application
+
