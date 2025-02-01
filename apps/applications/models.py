@@ -1,8 +1,8 @@
 from django.db import models
 from django.utils import timezone
 
-from apps.applications.choices.courseChoices import Course, CourseFormat, CourseType
-from apps.applications.choices.statusType import StatusType
+from apps.applications.choices.course_choices import Course, CourseFormat, CourseType
+from apps.applications.choices.status_type import StatusType
 
 
 class OrderModels(models.Model):
