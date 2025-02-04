@@ -1,9 +1,9 @@
 from django.urls import path
 
-from .views import ApplicationListCreateView, ApplicationRetrieveUpdateDestroyView
+from .views import ApplicationListView, ApplicationRetrieveUpdateView
 
 urlpatterns = [
-    path('', ApplicationListCreateView.as_view(), name='applications_list_create'),
+    path('', ApplicationListView.as_view(), name='applications_list'),
 
-    path('/<int:pk>', ApplicationRetrieveUpdateDestroyView.as_view(), name='application_retrieve_update_delete'),
+    path('/<int:pk>', ApplicationRetrieveUpdateView.as_view(), name='application_retrieve_update'),
 ]

@@ -117,16 +117,23 @@
 					"name": "users",
 					"item": [
 						{
-							"name": "create-users",
+							"name": "create-manager",
 							"request": {
 								"auth": {
-									"type": "noauth"
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{access}}",
+											"type": "string"
+										}
+									]
 								},
 								"method": "POST",
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"email\":\"grigoriyv1209@gmail.com\",\r\n    \"password\":\"user\",\r\n    \"profile\":{\r\n        \"name\":\"Eldar\",\r\n        \"surname\":\"Petrov\",\r\n        \"phone\":23902020\r\n    }\r\n}",
+									"raw": "",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -134,26 +141,40 @@
 									}
 								},
 								"url": {
-									"raw": "{{host}}/all_users/users",
+									"raw": "{{host}}/all_users/users/create-manager",
 									"host": [
 										"{{host}}"
 									],
 									"path": [
 										"all_users",
-										"users"
+										"users",
+										"create-manager"
 									]
 								}
 							},
 							"response": []
 						},
 						{
-							"name": "update_delete_retrive",
+							"name": "user_info_id",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
 							"request": {
-								"method": "DELETE",
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{access}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"email\":\"user25@gmail.com\",\r\n    \"password\":\"user12\",\r\n    \"profile\":{\r\n        \"phone\": \"0631234582229\"\r\n\r\n    }\r\n}",
+									"raw": "",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -161,17 +182,11 @@
 									}
 								},
 								"url": {
-									"raw": "http://127.0.0.1:8000/api/all_users/users/:id",
-									"protocol": "http",
+									"raw": "{{host}}/all_users/users/:id",
 									"host": [
-										"127",
-										"0",
-										"0",
-										"1"
+										"{{host}}"
 									],
-									"port": "8000",
 									"path": [
-										"api",
 										"all_users",
 										"users",
 										":id"
@@ -179,7 +194,7 @@
 									"variable": [
 										{
 											"key": "id",
-											"value": "20"
+											"value": ""
 										}
 									]
 								}
@@ -187,19 +202,29 @@
 							"response": []
 						},
 						{
-							"name": "test",
+							"name": "me_info",
 							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{access}}",
+											"type": "string"
+										}
+									]
+								},
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{host}}/all_users/users/test",
+									"raw": "{{host}}/all_users/users/me",
 									"host": [
 										"{{host}}"
 									],
 									"path": [
 										"all_users",
 										"users",
-										"test"
+										"me"
 									]
 								}
 							},
@@ -281,83 +306,6 @@
 								}
 							},
 							"response": []
-						},
-						{
-							"name": "to_manage",
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{access}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "PATCH",
-								"header": [],
-								"url": {
-									"raw": "{{host}}/admins/:id/to_manage",
-									"host": [
-										"{{host}}"
-									],
-									"path": [
-										"admins",
-										":id",
-										"to_manage"
-									],
-									"variable": [
-										{
-											"key": "id",
-											"value": "14"
-										}
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "to_owner",
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{access}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "PATCH",
-								"header": [],
-								"url": {
-									"raw": "http://127.0.0.1:8000/api/all_users/admins/:id/to_owner",
-									"protocol": "http",
-									"host": [
-										"127",
-										"0",
-										"0",
-										"1"
-									],
-									"port": "8000",
-									"path": [
-										"api",
-										"all_users",
-										"admins",
-										":id",
-										"to_owner"
-									],
-									"variable": [
-										{
-											"key": "id",
-											"value": "14"
-										}
-									]
-								}
-							},
-							"response": []
 						}
 					]
 				}
@@ -367,36 +315,13 @@
 			"name": "orders",
 			"item": [
 				{
-					"name": "list_create_order",
+					"name": "list_order",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
-									"var template = `\r",
-									"<style type=\"text/css\">\r",
-									"    .tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}\r",
-									"    .tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}\r",
-									"    .tftable tr {background-color:#ffffff;}\r",
-									"    .tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}\r",
-									"    .tftable tr:hover {background-color:#e0ffff;}\r",
-									"</style>\r",
-									"\r",
-									"<table class=\"tftable\" border=\"1\">\r",
-									"    <tr>\r",
-									"        <th>Detail</th>\r",
-									"    </tr>\r",
-									"    <tr>\r",
-									"        <td>{{response.detail}}</td>\r",
-									"    </tr>\r",
-									"</table>\r",
-									"`;\r",
-									"\r",
-									"function constructVisualizerPayload() {\r",
-									"    return { response: pm.response.json() }\r",
-									"}\r",
-									"\r",
-									"pm.visualizer.set(template, constructVisualizerPayload());"
+									""
 								],
 								"type": "text/javascript",
 								"packages": {}
@@ -404,17 +329,18 @@
 						}
 					],
 					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"name\":\"\",\r\n    \"surname\":\"\",\r\n    \"email\":\"\", \r\n    \"phone\": \"\",\r\n    \"age\":1,\r\n    \"course\": \"\",\r\n    \"course_type\":\"\",\r\n    \"course_format\":\"\",\r\n    \"sum\":1 ,\r\n    \"status\":\"\",\r\n    \"msg\":\"\",\r\n    \"utm\":\"\"\r\n\r\n\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access}}",
+									"type": "string"
 								}
-							}
+							]
 						},
+						"method": "GET",
+						"header": [],
 						"url": {
 							"raw": "{{host}}/application",
 							"host": [
@@ -422,15 +348,85 @@
 							],
 							"path": [
 								"application"
+							],
+							"query": [
+								{
+									"key": "order",
+									"value": "surname",
+									"disabled": true
+								},
+								{
+									"key": "",
+									"value": "email",
+									"disabled": true
+								},
+								{
+									"key": "",
+									"value": "age",
+									"disabled": true
+								},
+								{
+									"key": "",
+									"value": "course_type",
+									"disabled": true
+								},
+								{
+									"key": "",
+									"value": "course_format",
+									"disabled": true
+								},
+								{
+									"key": "",
+									"value": "status",
+									"disabled": true
+								},
+								{
+									"key": "",
+									"value": "alreadyPaid",
+									"disabled": true
+								},
+								{
+									"key": "",
+									"value": "created_at",
+									"disabled": true
+								},
+								{
+									"key": "",
+									"value": "page",
+									"disabled": true
+								},
+								{
+									"key": "",
+									"value": "name",
+									"disabled": true
+								},
+								{
+									"key": "",
+									"value": "",
+									"disabled": true
+								}
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "detail_put_patch_delete_order",
+					"name": "detail_order",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
 					"request": {
-						"method": "DELETE",
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
 						"header": [],
 						"body": {
 							"mode": "raw",
@@ -453,7 +449,50 @@
 							"variable": [
 								{
 									"key": "id",
-									"value": "503"
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "put_order",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\":\"petro\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/application/:id",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"application",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
 								}
 							]
 						}
