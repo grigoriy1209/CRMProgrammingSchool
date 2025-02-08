@@ -21,7 +21,7 @@ class ApplicationListView(GenericAPIView):
     filterset_class = ApplicateFilter
     filter_backends = (DjangoFilterBackend,)
     pagination_class = PagePagination
-    permission_classes = (IsManager,)
+    permission_classes = (AllowAny,)
 
     def get_queryset(self):
         queryset = self.queryset
