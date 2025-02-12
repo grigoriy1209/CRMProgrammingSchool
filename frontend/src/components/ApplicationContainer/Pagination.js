@@ -1,41 +1,32 @@
-const Pagination = ({
-    totalItems,
-    itemsPerPage,
-    currentPage,
-    setPage})=>{
-    const totalPages = Math.ceil(totalItems / itemsPerPage);
+import { Pagination, PaginationItem } from '@mui/material';
+import { ArrowBack, ArrowForward } from '@mui/icons-material';
 
-    const handlePageChange = (page)=>{
-        if (page>= 1 && page<= totalPages){
-            setPage(page);
-        }
-    };
+const CurrentPagination = ({ currentPage, totalPages, onPageChange }) => {
     return (
-        <div className="pagination">
-            <button
-                onClick={() => handlePageChange(currentPage - 1)}
-                disabled={currentPage === 1}
-            >
-                Попередня
-            </button>
-            {[...Array(totalPages).keys()].map((i) => (
-                <button
-                    key={i + 1}
-                    onClick={() => handlePageChange(i + 1)}
-                    className={currentPage === i + 1 ? 'active' : ''}
-                >
-                    {i + 1}
-                </button>
-            ))}
-            <button
-                onClick={() => handlePageChange(currentPage + 1)}
-                disabled={currentPage === totalPages}
-            >
-                Наступна
-            </button>
-        </div>
-    )
-}
-export {
-    Pagination,
-}
+        <Pagination
+            count={totalPages}
+            page={currentPage}
+            onChange={(_, page) => onPageChange(page)}
+            renderItem={(item) => (
+                <PaginationItem
+                    slots={{ previous: ArrowBack, next: ArrowForward }}
+                    sx={{
+                        '&.Mui-selected': {
+                            backgroundColor: '#08ff00',
+                            color: '#fff',
+                        },
+                        '&:hover': {
+                            backgroundColor: '#ffb74d',
+                        },
+                    }}
+                    {...item}
+                />
+            )}
+        />
+    );
+};
+
+export {CurrentPagination};
+
+
+

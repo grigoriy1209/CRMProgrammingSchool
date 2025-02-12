@@ -7,6 +7,8 @@ const applicationService = {
             params:{
                 page:page,
                 limit:limit
+
+
             }
         })
     },

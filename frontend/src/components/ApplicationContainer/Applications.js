@@ -1,34 +1,52 @@
-import React, {useEffect, useState} from "react";
-import {Application} from "./Application";
+import {useEffect, useState} from "react";
+
 import {applicationService} from "../../services/applicationService";
-import {Pagination} from "./Pagination"
+import {CurrentPagination} from "./Pagination";
+import {Application} from "./Application";
+import {useSearchParams} from "react-router-dom";
 
 const Applications = () => {
     const [applications, setApplications] = useState([])
-    const [totalItems, setTotalItems] = useState(0)
     const [currentPage, setCurrentPage] = useState(1)
-    const itemsPerPage = 10;
+    const [totalPages, setTotalPages] = useState(1)
+    const [searchParams,setSearchParams] = useSearchParams();
 
-    useEffect(()=> {
-        applicationService.getAll(currentPage, itemsPerPage).then(({data}) => {
+    useEffect(() => {
+        const pageful = parseInt(searchParams.get("page"),10) ;
+        setCurrentPage(pageful);
+    }, [searchParams]);
+
+    useEffect(() => {
+        setSearchParams({page: currentPage.toString(), });
+        getApplication(currentPage);
+    },[currentPage,setSearchParams]);
+
+    const handlePageChange = (page) => {
+        if(page<1 || page > totalPages)return;
+        setCurrentPage(page);
+    }
+
+    const getApplication =async (page) => {
+        try {
+            const response = await applicationService.getAll(page);
+            const data = response.data;
             setApplications(data.result);
-            setTotalItems(data.total_items);
-        })
-    },[currentPage])
+            setCurrentPage(data.current_page);
+            setTotalPages(data.total_pages)
+        }catch(error){
+            console.log(error)
+        }
+    }
+
     return (
         <div>
-            {applications.length > 0 ? (
-                applications.map((application) => (
-                    <Application key={application.id} application={application}/>
-                ))
-            ) : (
-                <p>Заявки відсутні</p>
-            )}
-            <Pagination
-                totalItems={totalItems}
-                itemsPerPage={itemsPerPage}
+            {
+                applications.map((application, i) => <Application key={i} application={application} />)
+            }
+            <CurrentPagination
                 currentPage={currentPage}
-                setPage={setCurrentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
             />
         </div>
     );
