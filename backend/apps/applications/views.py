@@ -1,3 +1,4 @@
+from rest_framework.filters import OrderingFilter
 from rest_framework.generics import GenericAPIView, RetrieveUpdateAPIView
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -19,7 +20,7 @@ class ApplicationListView(GenericAPIView):
     serializer_class = ApplicationSerializer
     queryset = OrderModels.objects.all()
     filterset_class = ApplicateFilter
-    filter_backends = (DjangoFilterBackend,)
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
     pagination_class = PagePagination
     permission_classes = (AllowAny,)
 

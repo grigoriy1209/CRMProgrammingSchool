@@ -1,19 +1,19 @@
-import {apiService} from "./apiService";
-import {urls} from "../constants/urls";
+import { apiService } from "./apiService";
+import { urls } from "../constants/urls";
 
 const applicationService = {
-    getAll:(page,limit)=> {
-        return apiService.get(urls.application,{
-            params:{
-                page:page,
-                limit:limit
-
-
+    getAll: (page, searchParams) => {
+        return apiService.get(urls.application.base, {
+            params: {
+                page: page,
+                ...Object.fromEntries(searchParams.entries()),
             }
-        })
+        });
     },
+    getById: (id) => apiService(urls.application.byId(id)),
     create(data) {
-        return apiService.post(urls.application, data);
+        return apiService.post(urls.application.base, data);
     }
-}
-export {applicationService}
+};
+
+export { applicationService };

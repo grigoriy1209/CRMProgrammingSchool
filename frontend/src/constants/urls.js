@@ -7,7 +7,10 @@ const urls = {
     auth: {
         login: auth,
     },
-    application
+    application:{
+        base:application,
+        byId:(id)=>`application/${id}`,
+    }
 
 }
 export {
