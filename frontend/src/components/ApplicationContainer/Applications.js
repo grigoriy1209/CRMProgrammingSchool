@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { applicationService } from "../../services/applicationService";
 import { CurrentPagination } from "./Pagination";
 import { useSearchParams } from "react-router-dom";
+import { Table, TableHead, TableBody, TableRow, TableCell, Paper, TableContainer, Box } from "@mui/material";
 
 const Applications = () => {
     const [applications, setApplications] = useState([]);
@@ -10,7 +11,7 @@ const Applications = () => {
     const [searchParams, setSearchParams] = useSearchParams();
 
     useEffect(() => {
-        const page = parseInt(searchParams.get("page"), 10) || 1;
+        const page = parseInt(searchParams.get("page"), 10);
         setCurrentPage(page);
     }, [searchParams]);
 
@@ -50,38 +51,52 @@ const Applications = () => {
     };
 
     return (
-        <div>
-            <table>
-                <thead>
-                <tr>
-                    {applications.length > 0 &&
-                        Object.keys(applications[0]).map((key) => (
-                            <th key={key} onClick={() => handleSort(key)} style={{ cursor: "pointer" }}>
-                                {key} {searchParams.get("order")?.includes(key) &&
-                                (searchParams.get("order").endsWith("asc") ? "⬆️" : "⬇️")}
-                            </th>
+        <Box sx={{
+            padding: 2,
+            border: "2px solid #1976d2",
+            borderRadius: "8px",
+            backgroundColor: "#f5f5f5",
+            marginBottom: 2
+        }}>
+            <TableContainer component={Paper} style={{ margin: 0, padding: 0 }}>
+                <Table size="small">
+                    <TableHead>
+                        <TableRow>
+                            {applications.length > 0 &&
+                                Object.keys(applications[0]).map((key) => (
+                                    <TableCell key={key} onClick={() => handleSort(key)} style={{
+                                        cursor: "pointer",
+                                        border: "1px solid #ddd",
+                                        fontWeight: "bold",
+                                        padding: "4px",
+                                        backgroundColor: "#e3f2fd"
+                                    }}>
+                                        {key} {searchParams.get("order")?.includes(key) &&
+                                        (searchParams.get("order").endsWith("asc") ? "⬆️" : "⬇️")}
+                                    </TableCell>
+                                ))}
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {applications.map((application, i) => (
+                            <TableRow key={i}>
+                                {Object.values(application).map((value, j) => (
+                                    <TableCell key={j} style={{
+                                        border: "1px solid #ddd",
+                                        padding: "4px"
+                                    }}>{String(value)}</TableCell>
+                                ))}
+                            </TableRow>
                         ))}
-                </tr>
-                </thead>
-                <tbody>
-                {applications.map((application, i) => (
-                    <tr key={i}>
-                        {Object.values(application).map((value, j) => (
-                            <td key={j}>{String(value)}</td>
-
-                        ))}
-                    </tr>
-                ))}
-                </tbody>
-            </table>
-
-
+                    </TableBody>
+                </Table>
+            </TableContainer>
             <CurrentPagination
                 currentPage={currentPage}
                 totalPages={totalPages}
                 onPageChange={handlePageChange}
             />
-        </div>
+        </Box>
     );
 };
 
