@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'apps.all_users_info.auth',
     'apps.all_users_info.admins',
     'apps.applications',
+    'apps.groups',
     'core',
 
 ]
