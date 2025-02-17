@@ -8,9 +8,7 @@ class GroupModel(BaseModel):
         db_table = 'groups_order'
         ordering = ['id']
 
-    name = models.CharField(max_length=25,)
+    name = models.CharField(max_length=25, unique=True)
 
     def __str__(self):
         return self.name
-
-

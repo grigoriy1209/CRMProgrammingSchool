@@ -10,6 +10,7 @@ from apps.all_users_info.users.permissions import IsManager
 from apps.applications.filters import ApplicateFilter
 from apps.applications.models import OrderModels
 from apps.applications.serializers import ApplicationSerializer
+from apps.groups.models import GroupModel
 
 from core.pagination import PagePagination
 
@@ -47,6 +48,7 @@ class ApplicationRetrieveUpdateView(RetrieveUpdateAPIView):
     """
         get:Retrieve a single application
         put:Update a single application
+        patch:partial update a single application
     """
     serializer_class = ApplicationSerializer
     queryset = OrderModels.objects.all()
@@ -57,6 +59,21 @@ class ApplicationRetrieveUpdateView(RetrieveUpdateAPIView):
 
     def put(self, request, *args, **kwargs):
         return super().put(request, *args, **kwargs)
+
+    def patch(self, request, *args, **kwargs):
+        order = self.get_object()
+        group_id = request.data.get('group_id')
+
+        if group_id:
+            try:
+                group = GroupModel.objects.get(pk=group_id)
+                order.group = group
+                order.save(update_fields=['group'])
+                return Response({'message': 'Group has been assigned to the order successfully'},
+                                status=status.HTTP_200_OK)
+            except GroupModel.DoesNotExist:
+                return Response({'message': "Group not found"}, status=status.HTTP_400_BAD_REQUEST)
+        return super().patch(request, *args, **kwargs)
 
 
 class TakeManagerView(GenericAPIView):

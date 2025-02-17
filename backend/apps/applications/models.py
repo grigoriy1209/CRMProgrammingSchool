@@ -3,6 +3,7 @@ from django.utils import timezone
 
 from apps.applications.choices.course_choices import Course, CourseFormat, CourseType
 from apps.applications.choices.status_type import StatusType
+from apps.groups.models import GroupModel
 
 
 class OrderModels(models.Model):
@@ -26,7 +27,8 @@ class OrderModels(models.Model):
     manager = models.ForeignKey('users.UserModel', on_delete=models.SET_NULL, null=True, blank=True,
                                 related_name='orders')
 
-    group = models.CharField(max_length=25,)
+    group = models.ForeignKey(GroupModel, on_delete=models.CASCADE, null=True, blank=True,
+                              related_name='orders')
 
     def assign_manager(self, user):
         if not self.manager:
