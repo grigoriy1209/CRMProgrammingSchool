@@ -1,13 +1,14 @@
 from rest_framework import serializers
 
+from apps.all_users_info.users.serializers import UserSerializer
 from apps.applications.models import OrderModels
 
 
 class ApplicationSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrderModels
-        manager = serializers.CharField(source="get_manager_name", read_only=True)
 
+        manager = serializers.CharField(source="get_manager_name", read_only=True)
         fields = (
             'id',
             'name',
@@ -22,7 +23,7 @@ class ApplicationSerializer(serializers.ModelSerializer):
             'sum',
             'alreadyPaid',
             'created_at',
-            "manager",
+            'manager',
             'group'
         )
         read_only_fields = ('id', 'created_at', 'manager')
@@ -33,9 +34,8 @@ class ApplicationSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data: dict):
         request = self.context.get('request')
+
         if request and hasattr(request, 'user') and request.user.is_active:
             if 'manager' in validated_data and instance.manager is None:
                 instance.manager = request.user
         return super().update(instance, validated_data)
-
-

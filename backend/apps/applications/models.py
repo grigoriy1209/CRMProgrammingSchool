@@ -1,9 +1,14 @@
+from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils import timezone
 
 from apps.applications.choices.course_choices import Course, CourseFormat, CourseType
 from apps.applications.choices.status_type import StatusType
 from apps.groups.models import GroupModel
+
+from core.dataclasses.user_dataclass import User
+
+UserModel: User = get_user_model()
 
 
 class OrderModels(models.Model):
@@ -24,7 +29,7 @@ class OrderModels(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     status = models.CharField(max_length=15, choices=StatusType.choices, )
 
-    manager = models.ForeignKey('users.UserModel', on_delete=models.SET_NULL, null=True, blank=True,
+    manager = models.ForeignKey(UserModel, on_delete=models.SET_NULL, null=True, blank=True,
                                 related_name='orders')
 
     group = models.ForeignKey(GroupModel, on_delete=models.CASCADE, null=True, blank=True,
@@ -41,3 +46,5 @@ class OrderModels(models.Model):
         if self.manager:
             return f'{self.manager.name} {self.manager.surname}'
         return 'No manager assigned'
+
+

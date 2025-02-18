@@ -98,3 +98,7 @@ class TakeManagerView(GenericAPIView):
             return Response({'message': 'Application has been accepted'}, status=status.HTTP_200_OK)
 
         return Response({'message': 'Application is already being processed'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
