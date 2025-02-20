@@ -1,7 +1,6 @@
 from rest_framework import serializers
 
-from apps.all_users_info.users.serializers import UserSerializer
-from apps.applications.models import OrderModels
+from apps.applications.models import CommentModels, OrderModels
 
 
 class ApplicationSerializer(serializers.ModelSerializer):
@@ -24,7 +23,8 @@ class ApplicationSerializer(serializers.ModelSerializer):
             'alreadyPaid',
             'created_at',
             'manager',
-            'group'
+            'group', 'message', 'utm'
+
         )
         read_only_fields = ('id', 'created_at', 'manager')
 
@@ -39,3 +39,14 @@ class ApplicationSerializer(serializers.ModelSerializer):
             if 'manager' in validated_data and instance.manager is None:
                 instance.manager = request.user
         return super().update(instance, validated_data)
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    author = serializers.CharField(source="author.surname", )
+    created_at = serializers.DateTimeField()
+
+    class Meta:
+        model = CommentModels
+        fields = {
+            "text", "author", "created_at"
+        }

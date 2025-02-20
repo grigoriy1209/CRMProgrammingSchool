@@ -1,3 +1,5 @@
+from django.utils import timezone
+
 from rest_framework import status
 from rest_framework.filters import OrderingFilter
 from rest_framework.generics import GenericAPIView, RetrieveUpdateAPIView
@@ -8,8 +10,8 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 from apps.all_users_info.users.permissions import IsManager
 from apps.applications.filters import ApplicateFilter
-from apps.applications.models import OrderModels
-from apps.applications.serializers import ApplicationSerializer
+from apps.applications.models import CommentModels, OrderModels
+from apps.applications.serializers import ApplicationSerializer, CommentSerializer
 from apps.groups.models import GroupModel
 
 from core.pagination import PagePagination
@@ -76,29 +78,41 @@ class ApplicationRetrieveUpdateView(RetrieveUpdateAPIView):
         return super().patch(request, *args, **kwargs)
 
 
-class TakeManagerView(GenericAPIView):
+class AddCommentView(GenericAPIView):
     """
-        post: manager selects the application
+        post:Add a comment to the application and update status and manager if necessary
     """
-    serializer_class = ApplicationSerializer
-    queryset = OrderModels.objects.all()
+    serializer_class = CommentSerializer
+    queryset = CommentModels.objects.all()
     permission_classes = (IsManager,)
 
     def post(self, request, *args, **kwargs):
         order_id = kwargs.get('pk')
         try:
             order = OrderModels.objects.get(id=order_id)
-            print(order.id)
         except OrderModels.DoesNotExist:
             return Response({'message': 'Order not found'}, status=status.HTTP_404_NOT_FOUND)
 
-        if order.manager is None:
+        if order.manager is not None:
+            return Response({'message': 'You are already a manager'}, status=status.HTTP_400_BAD_REQUEST)
+
+        if order.status in [None, 'New']:
+            comment_data = request.data.get('comment')
+            if not comment_data:
+                return Response({'message': 'Comment is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+            comment = CommentModels.objects.create(
+                order=order,
+                text=comment_data,
+                author=request.user,
+                created_at=timezone.now(),
+            )
+
             order.manager = request.user
-            order.save(update_fields=['manager'])
-            return Response({'message': 'Application has been accepted'}, status=status.HTTP_200_OK)
+            order.status = 'InWork'
+            order.save()
 
-        return Response({'message': 'Application is already being processed'}, status=status.HTTP_400_BAD_REQUEST)
-
-
-
-
+            serializer = CommentSerializer(comment)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response({'message': f'Cannot process application with status {order.status}'},
+                        status=status.HTTP_400_BAD_REQUEST)

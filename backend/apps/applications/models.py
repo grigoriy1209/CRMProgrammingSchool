@@ -35,6 +35,9 @@ class OrderModels(models.Model):
     group = models.ForeignKey(GroupModel, on_delete=models.CASCADE, null=True, blank=True,
                               related_name='orders')
 
+    message = models.TextField(null=True, blank=True)
+    utm = models.CharField(max_length=100, null=True, blank=True)
+
     def assign_manager(self, user):
         if not self.manager:
             self.manager = user
@@ -48,3 +51,11 @@ class OrderModels(models.Model):
         return 'No manager assigned'
 
 
+class CommentModels(models.Model):
+    class Meta:
+        db_table = 'comments'
+
+    order = models.ForeignKey(OrderModels, on_delete=models.CASCADE, related_name='comments')
+    author = models.ForeignKey(UserModel, on_delete=models.SET_NULL, null=True, )
+    text = models.TextField()
+    created_at = models.DateTimeField(default=timezone.now)
