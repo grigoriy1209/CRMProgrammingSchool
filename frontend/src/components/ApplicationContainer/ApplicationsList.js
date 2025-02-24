@@ -67,7 +67,6 @@ const ApplicationsList = () => {
             alert("Неможливо додати коментар до цієї заявки");
             return;
         }
-
         try {
             const updatedApplication = {
                 ...selectedApplication,
@@ -89,10 +88,10 @@ const ApplicationsList = () => {
 
             borderRadius: "8px",
             backgroundColor: "#f5f5f5",
-            width:"100%"
+            width: "100%"
         }}>
             <TableContainer component={Paper}>
-                <Table size="small" sx={{ width: "100%" }}>
+                <Table size="small" sx={{width: "100%"}}>
                     <TableHead>
                         <TableRow>
                             {[
