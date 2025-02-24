@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from apps.applications.models import CommentModels, OrderModels
+from apps.applications.models import OrderModels
 
 
 class ApplicationSerializer(serializers.ModelSerializer):
@@ -23,10 +23,11 @@ class ApplicationSerializer(serializers.ModelSerializer):
             'alreadyPaid',
             'created_at',
             'manager',
-            'group', 'message', 'utm'
+            'group',
+            'msg', 'utm'
 
         )
-        read_only_fields = ('id', 'created_at', 'manager')
+        read_only_fields = ('id', 'created_at', )
 
     def create(self, validated_data: dict):
         application = OrderModels.objects.create(**validated_data)
@@ -41,12 +42,12 @@ class ApplicationSerializer(serializers.ModelSerializer):
         return super().update(instance, validated_data)
 
 
-class CommentSerializer(serializers.ModelSerializer):
-    author = serializers.CharField(source="author.surname", )
-    created_at = serializers.DateTimeField()
-
-    class Meta:
-        model = CommentModels
-        fields = {
-            "text", "author", "created_at"
-        }
+# class CommentSerializer(serializers.ModelSerializer):
+#     author = serializers.CharField(source="author.surname", )
+#     created_at = serializers.DateTimeField()
+#
+#     class Meta:
+#         model = CommentModels
+#         fields = {
+#             "text", "author", "created_at"
+#         }

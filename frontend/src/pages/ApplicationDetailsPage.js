@@ -1,7 +1,8 @@
+import {ApplicationDetails} from "../components/ApplicationContainer/ApplicationDetails";
+
 const ApplicationDetailsPage = () => {
     return (
-        <div>
-            ApplicationDetailsPage
+        <div><ApplicationDetails/>
         </div>
     );
 };

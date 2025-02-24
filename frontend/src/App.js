@@ -12,6 +12,7 @@ const App = () => {
   return (
       <div>
         {
+
           applications.map(application=><div key={application.id}>{JSON.stringify(application.id)}</div>)
         }
       </div>

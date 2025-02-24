@@ -1,9 +1,10 @@
-import {Applications} from "../components/ApplicationContainer/Applications";
+import {ApplicationsList} from "../components/ApplicationContainer/ApplicationsList";
+
 
 const ApplicationPage = () => {
     return (
         <div>
-            <Applications/>
+            <ApplicationsList/>
         </div>
     );
 };

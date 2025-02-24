@@ -10,7 +10,7 @@ const applicationService = {
             }
         });
     },
-    getById: (id) => apiService(urls.application.byId(id)),
+    getById: (id) => apiService.get(urls.application.byId(id)),
     create(data) {
         return apiService.post(urls.application.base, data);
     }

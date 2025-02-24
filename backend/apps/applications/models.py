@@ -1,6 +1,5 @@
 from django.contrib.auth import get_user_model
 from django.db import models
-from django.utils import timezone
 
 from apps.applications.choices.course_choices import Course, CourseFormat, CourseType
 from apps.applications.choices.status_type import StatusType
@@ -26,7 +25,7 @@ class OrderModels(models.Model):
     course_type = models.CharField(max_length=100, choices=CourseType.choices, )
     sum = models.IntegerField()
     alreadyPaid = models.IntegerField(default=0, )
-    created_at = models.DateTimeField(default=timezone.now)
+    created_at = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=15, choices=StatusType.choices, )
 
     manager = models.ForeignKey(UserModel, on_delete=models.SET_NULL, null=True, blank=True,
@@ -35,7 +34,7 @@ class OrderModels(models.Model):
     group = models.ForeignKey(GroupModel, on_delete=models.CASCADE, null=True, blank=True,
                               related_name='orders')
 
-    message = models.TextField(null=True, blank=True)
+    msg = models.TextField(null=True, blank=True, max_length=100)
     utm = models.CharField(max_length=100, null=True, blank=True)
 
     def assign_manager(self, user):
@@ -49,13 +48,13 @@ class OrderModels(models.Model):
         if self.manager:
             return f'{self.manager.name} {self.manager.surname}'
         return 'No manager assigned'
-
-
-class CommentModels(models.Model):
-    class Meta:
-        db_table = 'comments'
-
-    order = models.ForeignKey(OrderModels, on_delete=models.CASCADE, related_name='comments')
-    author = models.ForeignKey(UserModel, on_delete=models.SET_NULL, null=True, )
-    text = models.TextField()
-    created_at = models.DateTimeField(default=timezone.now)
+#
+#
+# class CommentModels(models.Model):
+#     class Meta:
+#         db_table = 'comments'
+#
+#     order = models.ForeignKey(OrderModels, on_delete=models.CASCADE, related_name='comments')
+#     author = models.ForeignKey(UserModel, on_delete=models.SET_NULL, null=True, )
+#     text = models.TextField()
+#     created_at = models.DateTimeField(default=timezone.now)
