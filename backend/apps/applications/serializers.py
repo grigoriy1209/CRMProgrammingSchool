@@ -1,13 +1,27 @@
 from rest_framework import serializers
 
-from apps.applications.models import OrderModels
+from apps.applications.models import CommentModels, OrderModels
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    author = serializers.CharField(source="author.profile.surname", )
+    created_at = serializers.DateTimeField()
+
+    class Meta:
+        model = CommentModels
+        fields = (
+            "text", "author", "created_at"
+        )
 
 
 class ApplicationSerializer(serializers.ModelSerializer):
+    comments = CommentSerializer(many=True, read_only=True)
+
     class Meta:
         model = OrderModels
 
         manager = serializers.CharField(source="get_manager_name", read_only=True)
+
         fields = (
             'id',
             'name',
@@ -24,10 +38,10 @@ class ApplicationSerializer(serializers.ModelSerializer):
             'created_at',
             'manager',
             'group',
-            'msg', 'utm'
+            'msg', 'utm', 'comments'
 
         )
-        read_only_fields = ('id', 'created_at', )
+        read_only_fields = ('id', 'created_at',)
 
     def create(self, validated_data: dict):
         application = OrderModels.objects.create(**validated_data)
@@ -40,14 +54,3 @@ class ApplicationSerializer(serializers.ModelSerializer):
             if 'manager' in validated_data and instance.manager is None:
                 instance.manager = request.user
         return super().update(instance, validated_data)
-
-
-# class CommentSerializer(serializers.ModelSerializer):
-#     author = serializers.CharField(source="author.surname", )
-#     created_at = serializers.DateTimeField()
-#
-#     class Meta:
-#         model = CommentModels
-#         fields = {
-#             "text", "author", "created_at"
-#         }

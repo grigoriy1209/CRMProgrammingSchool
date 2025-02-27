@@ -48,13 +48,13 @@ class OrderModels(models.Model):
         if self.manager:
             return f'{self.manager.name} {self.manager.surname}'
         return 'No manager assigned'
-#
-#
-# class CommentModels(models.Model):
-#     class Meta:
-#         db_table = 'comments'
-#
-#     order = models.ForeignKey(OrderModels, on_delete=models.CASCADE, related_name='comments')
-#     author = models.ForeignKey(UserModel, on_delete=models.SET_NULL, null=True, )
-#     text = models.TextField()
-#     created_at = models.DateTimeField(default=timezone.now)
+
+
+class CommentModels(models.Model):
+    class Meta:
+        db_table = 'comments'
+
+    order = models.ForeignKey(OrderModels, on_delete=models.CASCADE, related_name='comments')
+    author = models.ForeignKey(UserModel, on_delete=models.CASCADE, null=True, related_name='comments')
+    text = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
