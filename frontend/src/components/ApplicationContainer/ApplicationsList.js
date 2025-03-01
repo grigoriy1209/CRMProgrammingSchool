@@ -107,9 +107,10 @@ const ApplicationsList = () => {
                                 'status',
                                 'sum',
                                 'alreadyPaid',
+                                'group',
                                 'created_at',
                                 'manager',
-                                'group',
+
                             ].map((key) => (
                                 <TableCell key={key}
                                            style={{fontWeight: "bold", backgroundColor: "#e3f2fd"}}>{key}</TableCell>
@@ -118,11 +119,25 @@ const ApplicationsList = () => {
                     </TableHead>
                     <TableBody>
                         {applications.map((application) => (
-                            <TableRow key={application.id} onClick={() => handleSelectApplication(application)}
+                            <TableRow key={application.id}  onClick={() => handleSelectApplication(application)}
                                       style={{cursor: "pointer"}}>
-                                {Object.values(application).slice(0, 15).map((value, j) => (
-                                    <TableCell key={j}>{String(value)}</TableCell>
-                                ))}
+                                <TableCell>{application.id}</TableCell>
+                                <TableCell>{application.name}</TableCell>
+                                <TableCell>{application.surname}</TableCell>
+                                <TableCell>{application.email}</TableCell>
+                                <TableCell>{application.phone}</TableCell>
+                                <TableCell>{application.age}</TableCell>
+
+                                <TableCell>{application.course}</TableCell>
+                                <TableCell>{application.course_type}</TableCell>
+                                <TableCell>{application.course_format}</TableCell>
+                                <TableCell>{application.status || "null"}</TableCell>
+
+                                <TableCell>{application.sum || "null"}</TableCell>
+                                <TableCell>{application.alreadyPaid || "null"}</TableCell>
+                                <TableCell>{application.created_at}</TableCell>
+                                <TableCell>{application.manager ||"null"}</TableCell>
+                                <TableCell>{application.group ||"null"}</TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
@@ -132,7 +147,8 @@ const ApplicationsList = () => {
                 <Box sx={{padding: 2, marginTop: 2, backgroundColor: "#e3f2fd"}}>
                     <p><strong>Message:</strong> {selectedApplication.msg}</p>
                     <p><strong>utm:</strong> {selectedApplication.utm}</p>
-                    <p><strong>Manager:</strong>{selectedApplication.manager}</p>
+                    {/*<p>{selectedApplication.comments.text}</p>*/}
+                    {/*<p>{selectedApplication.manager}</p>*/}
                     <TextField
                         label="Коментар"
                         multiline

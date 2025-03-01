@@ -4,7 +4,7 @@ from apps.applications.models import CommentModels, OrderModels
 
 
 class CommentSerializer(serializers.ModelSerializer):
-    author = serializers.CharField(source="author.profile.surname", )
+    author = serializers.CharField(source="author.profile.surname", read_only=True)
     created_at = serializers.DateTimeField()
 
     class Meta:
@@ -16,11 +16,11 @@ class CommentSerializer(serializers.ModelSerializer):
 
 class ApplicationSerializer(serializers.ModelSerializer):
     comments = CommentSerializer(many=True, read_only=True)
+    manager = serializers.CharField(source="manager.profile.surname", read_only=True)
+    group = serializers.CharField(source="group.name", read_only=True)
 
     class Meta:
         model = OrderModels
-
-        manager = serializers.CharField(source="get_manager_name", read_only=True)
 
         fields = (
             'id',

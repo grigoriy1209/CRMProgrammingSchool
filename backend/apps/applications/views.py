@@ -71,8 +71,8 @@ class ApplicationRetrieveUpdateView(RetrieveUpdateAPIView):
                 group = GroupModel.objects.get(pk=group_id)
                 order.group = group
                 order.save(update_fields=['group'])
-                return Response({'message': 'Group has been assigned to the order successfully'},
-                                status=status.HTTP_200_OK)
+                serializer = self.get_serializer(order)
+                return Response(serializer.data, status=status.HTTP_200_OK)
             except GroupModel.DoesNotExist:
                 return Response({'message': "Group not found"}, status=status.HTTP_400_BAD_REQUEST)
         return super().patch(request, *args, **kwargs)

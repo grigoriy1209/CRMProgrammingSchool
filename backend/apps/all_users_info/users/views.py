@@ -1,15 +1,12 @@
 from django.contrib.auth import get_user_model
 
-from rest_framework import status
-from rest_framework.generics import CreateAPIView, GenericAPIView, RetrieveAPIView, RetrieveUpdateDestroyAPIView
-from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework.response import Response
+from rest_framework.generics import CreateAPIView, RetrieveAPIView
+from rest_framework.permissions import IsAuthenticated
 
 from apps.all_users_info.users.serializers import UserSerializer
 
 from core.dataclasses.user_dataclass import User
 from core.permissions.isSuper_permissions import IsSuperUser
-from core.services.email_service import EmailService
 
 UserModel: User = get_user_model()
 
