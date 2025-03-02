@@ -16,8 +16,12 @@ class CommentSerializer(serializers.ModelSerializer):
 
 class ApplicationSerializer(serializers.ModelSerializer):
     comments = CommentSerializer(many=True, read_only=True)
-    manager = serializers.CharField(source="manager.profile.surname", read_only=True)
-    group = serializers.CharField(source="group.name", read_only=True)
+    # manager = serializers.CharField(source="manager.profile.surname", read_only=True)
+    # group = serializers.CharField(source="group.name", read_only=True)
+    # manager = UserSerializer(read_only=True,)
+    # group = GroupSerializer(read_only=True)
+    manager = serializers.SerializerMethodField()
+    group = serializers.PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
         model = OrderModels
@@ -42,6 +46,10 @@ class ApplicationSerializer(serializers.ModelSerializer):
 
         )
         read_only_fields = ('id', 'created_at',)
+        ordering = ('-created_at',)
+
+    def get_manager(self, obj):
+        return obj.manager.profile.surname if obj.manager else None
 
     def create(self, validated_data: dict):
         application = OrderModels.objects.create(**validated_data)

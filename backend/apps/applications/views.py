@@ -2,7 +2,7 @@ from django.utils import timezone
 
 from rest_framework import status
 from rest_framework.filters import OrderingFilter
-from rest_framework.generics import GenericAPIView, RetrieveUpdateAPIView
+from rest_framework.generics import GenericAPIView, RetrieveUpdateAPIView, get_object_or_404
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
@@ -32,7 +32,7 @@ class ApplicationListView(GenericAPIView):
         queryset = self.queryset
         order_by = self.request.query_params.get('order', '')
         if order_by:
-            queryset = queryset.order_by(order_by) if order_by.startswith('_') else queryset.order_by(order_by)
+            return self.queryset.order_by(order_by)
         return queryset
 
     def get(self, *args, **kwargs):
@@ -67,14 +67,11 @@ class ApplicationRetrieveUpdateView(RetrieveUpdateAPIView):
         group_id = request.data.get('group_id')
 
         if group_id:
-            try:
-                group = GroupModel.objects.get(pk=group_id)
-                order.group = group
-                order.save(update_fields=['group'])
-                serializer = self.get_serializer(order)
-                return Response(serializer.data, status=status.HTTP_200_OK)
-            except GroupModel.DoesNotExist:
-                return Response({'message': "Group not found"}, status=status.HTTP_400_BAD_REQUEST)
+            group = get_object_or_404(GroupModel, pk=group_id)
+            order.group = group
+            order.save(update_fields=['group'])
+            serializer = self.get_serializer(order)
+            return Response(self.get_serializer(order).data, status=status.HTTP_200_OK)
         return super().patch(request, *args, **kwargs)
 
 

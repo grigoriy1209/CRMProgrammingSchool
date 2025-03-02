@@ -23,6 +23,26 @@ const ApplicationsList = () => {
     const [selectedApplication, setSelectedApplication] = useState(null);
     const [comment, setComment] = useState("");
 
+    // Структура колонок
+    const columns = [
+        { key: "id", label: "ID" },
+        { key: "name", label: "Name" },
+        { key: "surname", label: "Surname" },
+        { key: "email", label: "Email" },
+        { key: "phone", label: "Phone" },
+        { key: "age", label: "Age" },
+        { key: "course", label: "Course" },
+        { key: "course_type", label: "Course Type" },
+        { key: "course_format", label: "Course Format" },
+        { key: "status", label: "Status" },
+        { key: "sum", label: "Sum" },
+        { key: "alreadyPaid", label: "Already Paid" },
+        { key: "group", label: "Group" },
+        { key: "created_at", label: "Created At" },
+        { key: "manager", label: "Manager" },
+    ];
+
+    // Завантаження даних
     useEffect(() => {
         const page = parseInt(searchParams.get("page"), 10);
         setCurrentPage(page);
@@ -40,6 +60,7 @@ const ApplicationsList = () => {
         try {
             const response = await applicationService.getAll(currentPage, searchParams);
             const data = response.data;
+            console.log(data);  // Логування для перевірки структури
             setApplications(data.result);
             setTotalPages(data.total_pages);
         } catch (error) {
@@ -47,19 +68,23 @@ const ApplicationsList = () => {
         }
     };
 
+    // Обробка зміни сторінки
     const handlePageChange = (page) => {
         if (page < 1 || page > totalPages) return;
         setCurrentPage(page);
     };
 
+    // Обрання заявки для коментарів
     const handleSelectApplication = (application) => {
         setSelectedApplication(application);
     };
 
+    // Обробка введення коментаря
     const handleCommentChange = (e) => {
         setComment(e.target.value);
     };
 
+    // Обробка надсилання коментаря
     const handleSubmitComment = async () => {
         if (!comment || !selectedApplication) return;
 
@@ -85,7 +110,6 @@ const ApplicationsList = () => {
 
     return (
         <Box sx={{
-
             borderRadius: "8px",
             backgroundColor: "#f5f5f5",
             width: "100%"
@@ -94,50 +118,21 @@ const ApplicationsList = () => {
                 <Table size="small" sx={{width: "100%"}}>
                     <TableHead>
                         <TableRow>
-                            {[
-                                'id',
-                                'name',
-                                'surname',
-                                'email',
-                                'phone',
-                                'age',
-                                'course',
-                                'course_type',
-                                'course_format',
-                                'status',
-                                'sum',
-                                'alreadyPaid',
-                                'group',
-                                'created_at',
-                                'manager',
-
-                            ].map((key) => (
-                                <TableCell key={key}
-                                           style={{fontWeight: "bold", backgroundColor: "#e3f2fd"}}>{key}</TableCell>
+                            {columns.map((col) => (
+                                <TableCell key={col.key} style={{fontWeight: "bold", backgroundColor: "#e3f2fd"}}>
+                                    {col.label}
+                                </TableCell>
                             ))}
                         </TableRow>
                     </TableHead>
                     <TableBody>
                         {applications.map((application) => (
-                            <TableRow key={application.id}  onClick={() => handleSelectApplication(application)}
-                                      style={{cursor: "pointer"}}>
-                                <TableCell>{application.id}</TableCell>
-                                <TableCell>{application.name}</TableCell>
-                                <TableCell>{application.surname}</TableCell>
-                                <TableCell>{application.email}</TableCell>
-                                <TableCell>{application.phone}</TableCell>
-                                <TableCell>{application.age}</TableCell>
-
-                                <TableCell>{application.course}</TableCell>
-                                <TableCell>{application.course_type}</TableCell>
-                                <TableCell>{application.course_format}</TableCell>
-                                <TableCell>{application.status || "null"}</TableCell>
-
-                                <TableCell>{application.sum || "null"}</TableCell>
-                                <TableCell>{application.alreadyPaid || "null"}</TableCell>
-                                <TableCell>{application.created_at}</TableCell>
-                                <TableCell>{application.manager ||"null"}</TableCell>
-                                <TableCell>{application.group ||"null"}</TableCell>
+                            <TableRow key={application.id} onClick={() => handleSelectApplication(application)} style={{cursor: "pointer"}}>
+                                {columns.map((col) => (
+                                    <TableCell key={col.key}>
+                                        {application[col.key] || "null"}
+                                    </TableCell>
+                                ))}
                             </TableRow>
                         ))}
                     </TableBody>
@@ -147,8 +142,6 @@ const ApplicationsList = () => {
                 <Box sx={{padding: 2, marginTop: 2, backgroundColor: "#e3f2fd"}}>
                     <p><strong>Message:</strong> {selectedApplication.msg}</p>
                     <p><strong>utm:</strong> {selectedApplication.utm}</p>
-                    {/*<p>{selectedApplication.comments.text}</p>*/}
-                    {/*<p>{selectedApplication.manager}</p>*/}
                     <TextField
                         label="Коментар"
                         multiline
@@ -174,3 +167,4 @@ const ApplicationsList = () => {
 };
 
 export {ApplicationsList};
+
