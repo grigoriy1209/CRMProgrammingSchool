@@ -1,9 +1,11 @@
-import {OrderList} from "../components";
+import React from "react";
+import {OrdersList} from "../components";
+
 
 const OrderPage = () => {
     return (
         <div>
-            <OrderList/>
+            <OrdersList/>
         </div>
     );
 };
