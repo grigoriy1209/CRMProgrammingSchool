@@ -1,7 +1,6 @@
 import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {IOrder, IOrderPagination} from "../../interfaces";
 import {orderServices} from "../../services/orderServices";
-import {AxiosError} from "axios";
 
 interface IState {
     orders: IOrder[];
@@ -24,14 +23,18 @@ const getAll = createAsyncThunk<IOrderPagination<IOrder>, number, { rejectValue:
     'orderSlice/getAll',
     async (page, {rejectWithValue}) => {
         try {
-            const response = await orderServices.getAll(page.toString())
+            const response = await orderServices.getAll(page.toString());
+            if (!response) {
+                return rejectWithValue("No data received");
+            }
             return response;
-        } catch (err) {
-            const error = err as AxiosError;
-            return rejectWithValue(error.message || "");
+        } catch (error) {
+            return rejectWithValue(error instanceof Error ? error.message : "Unknown error");
         }
     }
-)
+);
+
+
 const ordersSlice = createSlice({
     name: "ordersSlice",
     initialState: orderInitialState,
