@@ -1,90 +1,94 @@
 import { FC, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks";
 import { orderActions } from "../../redux/slices/ordersSlice";
+import {
+    Box,
+    Paper,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    Typography
+} from "@mui/material";
+import { IOrder } from "../../interfaces";
+import {Pagination} from "./Pagination";
+
+
+interface IColumn {
+    key: keyof IOrder;
+    label: string;
+}
 
 const OrdersList: FC = () => {
     const dispatch = useAppDispatch();
     const location = useLocation();
-    const navigate = useNavigate();
 
     const orders = useAppSelector((state) => state.orders.orders);
-    const page = useAppSelector((state) => state.orders.current_page);
-    const totalPages = useAppSelector((state) => state.orders.pagination?.total_pages ?? 1);
     const error = useAppSelector((state) => state.orders.error);
 
     useEffect(() => {
         const queryParams = new URLSearchParams(location.search);
         const pageUrl = queryParams.get("page") || "1";
-
-        console.log("Fetching orders for page:", pageUrl);
         dispatch(orderActions.getAll(Number(pageUrl)));
     }, [dispatch, location.search]);
 
-    console.log("Orders:", orders);
-    console.log("Page:", page, "Total Pages:", totalPages);
+    if (error) return <Typography variant="h6" color="error">Помилка: {error}</Typography>;
 
-    const prevPage = () => {
-        if (page > 1) {
-            const newPage = page - 1;
-            navigate(`?page=${newPage}`);
-        }
-    };
-
-    const nextPage = () => {
-        if (page < totalPages) {
-            const newPage = page + 1;
-            navigate(`?page=${newPage}`);
-        }
-    };
-
-    if (error) return <p>Помилка: {error}</p>;
+    const columns: IColumn[] = [
+        {key: "id", label: "ID"},
+        {key: "name", label: "Name"},
+        {key: "surname", label: "Surname"},
+        {key: "email", label: "Email"},
+        {key: "phone", label: "Phone"},
+        {key: "age", label: "Age"},
+        {key: "course", label: "Course"},
+        {key: "course_type", label: "Course Type"},
+        {key: "course_format", label: "Course Format"},
+        {key: "status", label: "Status"},
+        {key: "sum", label: "Sum"},
+        {key: "alreadyPaid", label: "Already Paid"},
+        {key: "group", label: "Group"},
+        {key: "created_at", label: "Created At"},
+        {key: "manager", label: "Manager"},
+    ];
 
     return (
-        <div>
-            <h2>Список заявок</h2>
+        <Box sx={{ width: "100%", backgroundColor: "#f5f5f5", padding: 2, borderRadius: "8px" }}>
             {orders.length ? (
-                <>
-                    <table style={{ border: "1px solid black", borderCollapse: "collapse" }}>
-                        <thead>
-                        <tr>
-                            <th>Ім'я</th>
-                            <th>Прізвище</th>
-                            <th>Email</th>
-                            <th>Телефон</th>
-                            <th>Вік</th>
-                            <th>Курс</th>
-                            <th>Тип курсу</th>
-                            <th>Формат курсу</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {orders.map((order) => (
-                            <tr key={order.id}>
-                                <td>{order.name}</td>
-                                <td>{order.surname}</td>
-                                <td>{order.email || "Не вказано"}</td>
-                                <td>{order.phone || "Не вказано"}</td>
-                                <td>{order.age}</td>
-                                <td>{order.course}</td>
-                                <td>{order.course_type}</td>
-                                <td>{order.course_format}</td>
-                            </tr>
-                        ))}
-                        </tbody>
-                    </table>
-
-                    <div style={{ marginTop: "10px" }}>
-                        <button onClick={prevPage} disabled={page <= 1}>Попередня сторінка</button>
-                        <span style={{ margin: "0 10px" }}>Сторінка {page} з {totalPages}</span>
-                        <button onClick={nextPage} disabled={page >= totalPages}>Наступна сторінка</button>
-                    </div>
-                </>
+                <TableContainer component={Paper}>
+                    <Table size="small">
+                        <TableHead>
+                            <TableRow>
+                                {columns.map((col) => (
+                                    <TableCell key={col.key} style={{ fontWeight: "bold", backgroundColor: "#e3f2fd" }}>
+                                        {col.label}
+                                    </TableCell>
+                                ))}
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {orders.map((order) => (
+                                <TableRow key={order.id}>
+                                    {columns.map((col) => (
+                                        <TableCell key={col.key}>
+                                            {order[col.key] || "null"}
+                                        </TableCell>
+                                    ))}
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
             ) : (
-                <p>Немає заявок для відображення.</p>
+                <Typography variant="h6" sx={{ marginTop: 2 }}>Немає заявок для відображення.</Typography>
             )}
-        </div>
+            <Pagination />
+        </Box>
     );
 };
 
 export { OrdersList };
+

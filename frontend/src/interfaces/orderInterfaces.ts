@@ -16,6 +16,7 @@ export interface IOrder {
     group: number,
     msg: string,
     utm: string,
+    [key: string]: any;
     comments: IComments[]
 }
 export interface IComments {

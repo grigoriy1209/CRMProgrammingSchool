@@ -2,7 +2,8 @@ import {FC, useEffect} from "react";
 import {useLocation, useNavigate} from "react-router-dom";
 import {useAppDispatch, useAppSelector} from "../../hooks/reduxHooks";
 import {orderActions} from "../../redux/slices/ordersSlice";
-
+import {Pagination as MUIButtonPagination, PaginationItem} from "@mui/material";
+import {ArrowBack, ArrowForward} from "@mui/icons-material";
 
 const Pagination: FC = () => {
     const dispatch = useAppDispatch();
@@ -14,39 +15,43 @@ const Pagination: FC = () => {
 
     useEffect(() => {
         const queryParams = new URLSearchParams(location.search);
-        const pageUrl = queryParams.get("page");
+        const pageUrl = Number(queryParams.get("page") || 1)
 
-        if (pageUrl) {
-            dispatch(orderActions.getAll(Number(pageUrl)));
+        if (page !== pageUrl) {
+            dispatch(orderActions.getAll(pageUrl));
         }
-    }, [dispatch, location.search]);
-
-    const prevPage = () => {
-        if (page > 1) {
-            const newPage = page - 1;
-            dispatch(orderActions.getAll(newPage));
-            navigate(`?page=${newPage}`);
-        }
-    };
-
-    const nextPage = () => {
-        if (page < totalPages) {
-            const newPage = page + 1;
-            dispatch(orderActions.getAll(newPage));
-            navigate(`?page=${newPage}`);
-        }
-    };
+    }, [dispatch, location.search, page]);
 
     return (
-        <div>
-            <button onClick={prevPage} disabled={page <= 1}>
-                Prev
-            </button>
-            <span>Page {page} of {totalPages}</span>
-            <button onClick={nextPage} disabled={page >= totalPages}>
-                Next
-            </button>
-        </div>
+        <MUIButtonPagination
+            count={totalPages}
+            page={page}
+            onChange={(_, newPage) => {
+                if (newPage !== page) {
+                    dispatch(orderActions.getAll(page));
+                    navigate(`?page=${newPage}`);
+                }
+
+            }}
+            renderItem={(item) => (
+                <PaginationItem
+                    {...item}
+                    slots={{
+                        previous: ArrowBack,
+                        next: ArrowForward
+                    }}
+                    sx={{
+                        '&.Mui-selected': {
+                            backgroundColor: '#08ff00',
+                            color: '#fff',
+                        },
+                        '&:hover': {
+                            backgroundColor: '#ffb74d',
+                        },
+                    }}
+                />
+            )}
+        />
     );
 };
 
