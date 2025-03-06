@@ -1,7 +1,10 @@
+import {OrderInfo} from "../components/OrderContainer/OrderInfo";
+
+
 const OrderDetailsPage = () => {
     return (
         <div>
-            OrderDetailsPage
+
         </div>
     );
 };

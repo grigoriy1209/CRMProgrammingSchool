@@ -1,9 +1,10 @@
-import { FC, useEffect } from "react";
-import { useLocation } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks";
-import { orderActions } from "../../redux/slices/ordersSlice";
+import React, {FC, useEffect, useState} from "react";
+import {useLocation, useNavigate} from "react-router-dom";
+import {useAppDispatch, useAppSelector} from "../../hooks/reduxHooks";
+import {orderActions} from "../../redux/slices/ordersSlice";
 import {
     Box,
+    Modal,
     Paper,
     Table,
     TableBody,
@@ -13,9 +14,9 @@ import {
     TableRow,
     Typography
 } from "@mui/material";
-import { IOrder } from "../../interfaces";
+import {IOrder} from "../../interfaces";
 import {Pagination} from "./Pagination";
-
+import {OrderInfo} from "./OrderInfo";
 
 interface IColumn {
     key: keyof IOrder;
@@ -25,9 +26,13 @@ interface IColumn {
 const OrdersList: FC = () => {
     const dispatch = useAppDispatch();
     const location = useLocation();
+    const navigate = useNavigate();
 
     const orders = useAppSelector((state) => state.orders.orders);
     const error = useAppSelector((state) => state.orders.error);
+    const orderInfo = useAppSelector((state) => state.orders.orderInfo);
+
+    const [open, setOpen] = useState(false);
 
     useEffect(() => {
         const queryParams = new URLSearchParams(location.search);
@@ -55,15 +60,23 @@ const OrdersList: FC = () => {
         {key: "manager", label: "Manager"},
     ];
 
+    const handleRowClick = (orderId: number) => {
+        const selectedOrder = orders.find(order => order.id === orderId);
+        if (selectedOrder) {
+            dispatch(orderActions.setOrderInfo(selectedOrder)); // Передача усієї інформації
+            setOpen(true);
+        }
+    };
+
     return (
-        <Box sx={{ width: "100%", backgroundColor: "#f5f5f5", padding: 2, borderRadius: "8px" }}>
+        <Box sx={{width: "100%", backgroundColor: "#f5f5f5", padding: 0, borderRadius: "8px"}}>
             {orders.length ? (
                 <TableContainer component={Paper}>
                     <Table size="small">
                         <TableHead>
                             <TableRow>
                                 {columns.map((col) => (
-                                    <TableCell key={col.key} style={{ fontWeight: "bold", backgroundColor: "#e3f2fd" }}>
+                                    <TableCell key={col.key} style={{fontWeight: "bold", backgroundColor: "#e3f2fd"}}>
                                         {col.label}
                                     </TableCell>
                                 ))}
@@ -71,7 +84,11 @@ const OrdersList: FC = () => {
                         </TableHead>
                         <TableBody>
                             {orders.map((order) => (
-                                <TableRow key={order.id}>
+                                <TableRow
+                                    key={order.id}
+                                    onClick={() => handleRowClick(order.id)}
+                                    style={{cursor: "pointer"}}
+                                >
                                     {columns.map((col) => (
                                         <TableCell key={col.key}>
                                             {order[col.key] || "null"}
@@ -83,12 +100,29 @@ const OrdersList: FC = () => {
                     </Table>
                 </TableContainer>
             ) : (
-                <Typography variant="h6" sx={{ marginTop: 2 }}>Немає заявок для відображення.</Typography>
+                <Typography variant="h6" sx={{marginTop: 2}}>Немає заявок для відображення.</Typography>
             )}
-            <Pagination />
+            <Pagination/>
+
+            <Modal open={open} onClose={() => setOpen(false)}>
+                <Box
+                    sx={{
+                        width: "400px",
+                        margin: "100px auto",
+                        backgroundColor: "white",
+                        padding: 2,
+                        borderRadius: "8px",
+                    }}
+                >
+                    {orderInfo ? (
+                        <OrderInfo order={orderInfo} onClose={() => setOpen(false)}/>
+                    ) : (
+                        <Typography>Завантаження інформації...</Typography>
+                    )}
+                </Box>
+            </Modal>
         </Box>
     );
 };
 
-export { OrdersList };
-
+export {OrdersList};
