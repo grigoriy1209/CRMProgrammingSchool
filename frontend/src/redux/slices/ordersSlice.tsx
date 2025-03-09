@@ -1,7 +1,7 @@
-import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { IOrder, IOrderPagination } from "../../interfaces";
-import { orderServices } from "../../services/orderServices";
-import { AxiosError } from "axios";
+import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit";
+import {IOrder, IOrderPagination} from "../../interfaces";
+import {orderServices} from "../../services/orderServices";
+import {AxiosError} from "axios";
 
 interface IState {
     orders: IOrder[];
@@ -19,10 +19,10 @@ let orderInitialState: IState = {
     error: null
 };
 
-// Async thunk для отримання всіх замовлень
+
 const getAll = createAsyncThunk<IOrderPagination<IOrder>, number, { rejectValue: string }>(
     'orderSlice/getAll',
-    async (page, { rejectWithValue }) => {
+    async (page, {rejectWithValue}) => {
         try {
             const response = await orderServices.getAll(page.toString());
             if (!response) {
@@ -35,10 +35,10 @@ const getAll = createAsyncThunk<IOrderPagination<IOrder>, number, { rejectValue:
     }
 );
 
-// Async thunk для отримання замовлення за ID
+
 const getById = createAsyncThunk<IOrder, string, { rejectValue: string }>(
     'orderSlice/byId',
-    async (id, { rejectWithValue }) => {
+    async (id, {rejectWithValue}) => {
         if (!id) {
             return rejectWithValue("ID is required");
         }
@@ -55,7 +55,19 @@ const getById = createAsyncThunk<IOrder, string, { rejectValue: string }>(
     }
 );
 
-// Додавання екшну для збереження інформації про замовлення в orderInfo
+const addComment = createAsyncThunk(
+    'orderSlice/addComment',
+    async ({orderId, comment, manager, status}: { orderId: number, comment: string, manager: string, status:string },
+           {rejectWithValue}) => {
+        try {
+            const response = await orderServices.addComments(orderId.toString(), comment, manager, status);
+            return response
+        } catch (err: any) {
+            return rejectWithValue(err.response?.data || "Failed to add comment")
+        }
+    }
+)
+
 const setOrderInfo = (state: IState, action: PayloadAction<IOrder>) => {
     state.orderInfo = action.payload;
 };
@@ -64,7 +76,7 @@ const ordersSlice = createSlice({
     name: "ordersSlice",
     initialState: orderInitialState,
     reducers: {
-        setOrderInfo, // додаємо екшн для збереження інформації
+        setOrderInfo,
     },
     extraReducers: builder =>
         builder
@@ -82,22 +94,27 @@ const ordersSlice = createSlice({
                 state.error = null;
             })
             .addCase(getById.fulfilled, (state, action: PayloadAction<IOrder>) => {
-                state.orderInfo = action.payload; // Оновлюємо orderInfo при отриманні замовлення
+                state.orderInfo = action.payload;
+            })
+            .addCase(addComment.fulfilled, (state, action: PayloadAction<IOrder | null>) => {
+                state.orderInfo = action.payload;
+                state.error = null;
             })
             .addCase(getAll.rejected, (state, action) => {
-                state.error = action.payload as string; // Обробка помилки
+                state.error = action.payload as string;
             })
             .addCase(getById.rejected, (state, action) => {
-                state.error = action.payload as string; // Обробка помилки
+                state.error = action.payload as string;
             })
 });
 
-const { reducer: orderReducer, actions } = ordersSlice;
+const {reducer: orderReducer, actions} = ordersSlice;
 
 const orderActions = {
     ...actions,
     getAll,
     getById,
+    addComment,
 };
 
-export { orderActions, orderReducer };
+export {orderActions, orderReducer};

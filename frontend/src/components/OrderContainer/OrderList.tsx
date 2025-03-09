@@ -63,7 +63,7 @@ const OrdersList: FC = () => {
     const handleRowClick = (orderId: number) => {
         const selectedOrder = orders.find(order => order.id === orderId);
         if (selectedOrder) {
-            dispatch(orderActions.setOrderInfo(selectedOrder)); // Передача усієї інформації
+            dispatch(orderActions.setOrderInfo(selectedOrder));
             setOpen(true);
         }
     };

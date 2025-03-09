@@ -1,6 +1,7 @@
 import React, { FC } from "react";
 import { Box, Typography } from "@mui/material";
 import { IOrder } from "../../interfaces";
+import {FormComments} from "./FormComments";
 
 interface IProps {
     order: IOrder | null;
@@ -30,6 +31,9 @@ const OrderInfo: FC<IProps> = ({ order, onClose }) => {
             </Typography>
             <Typography>
                 <strong>utm:</strong> {order.utm || "null"}
+            </Typography>
+            <Typography>
+                <FormComments orderId={order.orderId}/>
             </Typography>
         </Box>
     );

@@ -5,15 +5,17 @@ const application = '/application'
 const users = '/all_users/users'
 
 const urls = {
-    auth:{
+    auth: {
         login: auth,
     },
-    application:{
-        base:application,
-        byId:(id:number):string => `application/${id}`,
+    application: {
+        base: application,
+        byId: (id: number): string => `application/${id}`,
     },
+    addComment: {
+        addComment: (orderId: number): string => `application/${orderId}/addComment`,
+    }
 }
-
 
 
 export {

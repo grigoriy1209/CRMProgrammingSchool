@@ -18,8 +18,19 @@ const orderServices = {
         console.log("Response_ID:", response);
         return response.data;
     },
-
-
+    addComments: async (id:string, comment:string, manager:string, status:string):Promise<IOrder | null> => {
+        try {
+            const response = await apiServices.post<IOrder>(urls.addComment.addComment(+id),{
+                comment,
+                manager,
+                status
+            });
+            return response.data;
+        }catch (error){
+            console.error("Error adding comments:", error);
+            return null;
+        }
+    }
 }
 export {
     orderServices,

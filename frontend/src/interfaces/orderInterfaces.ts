@@ -1,3 +1,5 @@
+import {IUser} from "./userInterfaces";
+
 export interface IOrder {
     id: number,
     name: string,
@@ -20,6 +22,7 @@ export interface IOrder {
     comments: IComments[]
 }
 export interface IComments {
+    manager: IUser;
     id: number,
     author: string,
     text: string,
