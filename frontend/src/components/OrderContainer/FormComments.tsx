@@ -1,35 +1,29 @@
-import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks";
-import React, { FormEvent, useState, useEffect } from "react";
-import { orderActions } from "../../redux/slices/ordersSlice";
-import dayjs from "dayjs"; // для форматування дати
+import {useAppDispatch, useAppSelector} from "../../hooks/reduxHooks";
+import React, {FormEvent, useEffect, useState} from "react";
+import {orderActions} from "../../redux/slices/ordersSlice";
+import dayjs from "dayjs";
 
-const FormComments = ({ orderId }: { orderId: number }) => {
+const FormComments = ({orderId}: { orderId: number }) => {
     const dispatch = useAppDispatch();
     const [comment, setComment] = useState("");
     const [isCommentAllowed, setIsCommentAllowed] = useState(true);
 
     const order = useAppSelector((state) => state.orders.orderInfo);
-    const user = useAppSelector((state) => state.auth.user);
+    const user = useAppSelector((state) => state.users.user);
     const comments = order?.comments || [];
 
     useEffect(() => {
 
-        if (order && (order.manager || order.status !== 'New' && order.status !== null)) {
-            setIsCommentAllowed(false);
-        } else {
-            setIsCommentAllowed(true);
-        }
+        setIsCommentAllowed(!order?.manager && (order?.sq === "New" || !order?.status));
     }, [order]);
 
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
         if (comment.trim()) {
-            const manager = user?.lastName || "Unknown";
-            const newStatus = order?.status === null || order?.status === "New" ? "In Work" : order?.status;
+            const manager = user?.profile.surname ?? "";
+            const newStatus = order?.status === "New" || !order?.status ? "In_Work" : order.status;
 
-
-            dispatch(orderActions.addComment({ orderId, comment, manager, status: newStatus }));
-
+            dispatch(orderActions.addComment({orderId, comment, manager, status: newStatus}));
             setComment("");
         }
     };
@@ -37,39 +31,33 @@ const FormComments = ({ orderId }: { orderId: number }) => {
     return (
         <div>
             <div className="mb-4">
-                {comments.length > 0 ? (
+                {comments.length > 0 && (
                     <ul>
                         {comments.map((comment, index) => (
                             <li key={index} className="border-b py-2">
-                                <p>{comment.manager}:{comment.text}</p>
-                                <p>{dayjs(comment.created_at).format("YYYY-MM-DD HH:mm")}</p>
+                                <p>{`${comment?.manager}`}: {dayjs(comment?.created_at).format("MMMM DD, YYYY")}</p>
+                                <p>{comment?.text}</p>
                             </li>
                         ))}
                     </ul>
-                ) : (
-                    <p>Немає коментарів.</p>
                 )}
             </div>
-
-
-            {isCommentAllowed ? (
+            {isCommentAllowed && (
                 <form onSubmit={handleSubmit} className="flex flex-col space-y-2">
                     <textarea
                         value={comment}
                         onChange={(e) => setComment(e.target.value)}
-                        placeholder="Додати коментар..."
+                        placeholder=""
                         className="border p-2 rounded-md"
                         rows={3}
                     />
                     <button type="submit" className="bg-blue-500 text-white p-2 rounded-md">
-                        Додати коментар
+                      SUBMIT
                     </button>
                 </form>
-            ) : (
-                <p>Коментарі не можна додавати.</p>
             )}
         </div>
     );
 };
 
-export { FormComments };
+export {FormComments};

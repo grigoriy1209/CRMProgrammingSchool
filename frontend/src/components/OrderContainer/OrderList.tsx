@@ -1,7 +1,6 @@
 import React, {FC, useEffect, useState} from "react";
 import {useLocation, useNavigate} from "react-router-dom";
-import {useAppDispatch, useAppSelector} from "../../hooks/reduxHooks";
-import {orderActions} from "../../redux/slices/ordersSlice";
+import {format} from "date-fns";
 import {
     Box,
     Modal,
@@ -14,9 +13,13 @@ import {
     TableRow,
     Typography
 } from "@mui/material";
+
+import {useAppDispatch, useAppSelector} from "../../hooks/reduxHooks";
+import {orderActions} from "../../redux/slices/ordersSlice";
 import {IOrder} from "../../interfaces";
 import {Pagination} from "./Pagination";
 import {OrderInfo} from "./OrderInfo";
+
 
 interface IColumn {
     key: keyof IOrder;
@@ -91,7 +94,9 @@ const OrdersList: FC = () => {
                                 >
                                     {columns.map((col) => (
                                         <TableCell key={col.key}>
-                                            {order[col.key] || "null"}
+                                            {col.key === "created_at"
+                                                ? format(new Date(order.created_at), "MMMM dd, yyyy")
+                                                : order[col.key] || "null"}
                                         </TableCell>
                                     ))}
                                 </TableRow>

@@ -1,14 +1,21 @@
 from django.contrib.auth import get_user_model
-
-from rest_framework.generics import CreateAPIView, RetrieveAPIView
+from rest_framework.generics import CreateAPIView, RetrieveAPIView, ListAPIView
 from rest_framework.permissions import IsAuthenticated
 
 from apps.all_users_info.users.serializers import UserSerializer
-
 from core.dataclasses.user_dataclass import User
 from core.permissions.isSuper_permissions import IsSuperUser
 
 UserModel: User = get_user_model()
+
+
+class UsersList(ListAPIView):
+    """
+    get:List all users,
+    """
+    permission_classes = (IsSuperUser,)
+    serializer_class = UserSerializer
+    queryset = UserModel.objects.all()
 
 
 class AdminCreateManagerView(CreateAPIView):
@@ -43,7 +50,3 @@ class CurrentUserView(RetrieveAPIView):
 
     def get_object(self):
         return self.request.user
-
-
-
-
