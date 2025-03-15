@@ -1,17 +1,17 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { AppBar, Box, Toolbar, IconButton, Typography, Menu, Container, Avatar, Button, Tooltip, MenuItem } from '@mui/material';
+import React, {useState} from 'react';
+import {Link} from 'react-router-dom';
+import {AppBar, Avatar, Box, Container, IconButton, Menu, MenuItem, Toolbar, Tooltip, Typography} from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import AdbIcon from '@mui/icons-material/Adb';
 
 
 // import { MaterialUISwitch } from "./Styled/ThemeToggle";
-import {useAppDispatch, useAppSelector} from "../../hooks/reduxHooks";
+import {useAppDispatch} from "../../hooks/reduxHooks";
 import {userAction} from "../../redux/slices/usersSlice";
 
 
-const pages = ['Movies', 'Genres'];
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+const pages = ['Users']
+const settings = ['Users', 'Admin', 'Sort', 'Logout'];
 
 const Header = () => {
     const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
@@ -85,12 +85,12 @@ const Header = () => {
                             anchorEl={anchorElNav}
                             anchorOrigin={{
                                 vertical: 'bottom',
-                                horizontal: 'left',
+                                horizontal: 'right',
                             }}
                             keepMounted
                             transformOrigin={{
                                 vertical: 'top',
-                                horizontal: 'left',
+                                horizontal: 'right',
                             }}
                             open={Boolean(anchorElNav)}
                             onClose={handleCloseNavMenu}

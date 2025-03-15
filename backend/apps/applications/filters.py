@@ -4,10 +4,9 @@ from apps.applications.models import OrderModels
 
 
 class ApplicateFilter(filters.FilterSet):
-
     order = filters.OrderingFilter(
         fields=(
-            ('id','id'),
+            ('id', 'id'),
             ('name', 'name'),
             ('surname', 'surname'),
             ('email', 'email'),

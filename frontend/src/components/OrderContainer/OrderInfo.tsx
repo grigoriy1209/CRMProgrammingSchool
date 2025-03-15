@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { Box, Typography } from "@mui/material";
+import {Box, Button, Typography} from "@mui/material";
 import { IOrder } from "../../interfaces";
 import {FormComments} from "./FormComments";
 
@@ -8,7 +8,7 @@ interface IProps {
     onClose: () => void;
 }
 
-const OrderInfo: FC<IProps> = ({ order, onClose }) => {
+const OrderInfo: FC<IProps> = ({ order}) => {
     if (!order) {
         return <Typography>Завантаження...</Typography>;
     }
@@ -24,7 +24,7 @@ const OrderInfo: FC<IProps> = ({ order, onClose }) => {
             }}
         >
             <Typography>
-                <strong>Автор:</strong> {order.manager || ""}
+                <strong></strong> {order.manager || ""}
             </Typography>
             <Typography>
                 <strong>msg:</strong> {order.msg || "null"}
@@ -35,6 +35,9 @@ const OrderInfo: FC<IProps> = ({ order, onClose }) => {
             <Typography>
                 <FormComments orderId={order.orderId}/>
             </Typography>
+            <Button>
+                edit
+            </Button>
         </Box>
     );
 };

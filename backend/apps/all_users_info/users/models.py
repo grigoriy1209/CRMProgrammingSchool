@@ -10,6 +10,7 @@ from core.models import BaseModel
 class UserModel(AbstractBaseUser, BaseModel, PermissionsMixin):
     class Meta:
         db_table = 'auth_users'
+        ordering = ['-id']
 
     email = models.EmailField(unique=True)
     is_active = models.BooleanField(default=True)

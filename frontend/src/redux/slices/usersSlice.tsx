@@ -17,7 +17,7 @@ const initialState: UsersSliceType = {
 }
 
 const loadUsers = createAsyncThunk(
-    'usersSlice/loadUser',
+    'usersSlice/loadUsers',
     async (_, thunAPI) => {
         try {
             const users = await userService.getAll();
