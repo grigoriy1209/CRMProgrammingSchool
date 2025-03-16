@@ -1,9 +1,7 @@
 from typing import Type
 
 from django.contrib.auth import get_user_model
-
 from rest_framework.generics import get_object_or_404
-
 from rest_framework_simplejwt.tokens import BlacklistMixin, Token
 
 from core.dataclasses.user_dataclass import User
@@ -21,6 +19,11 @@ class ActionToken(BlacklistMixin, Token):
 class ActivateToken(ActionToken):
     token_type = ActionTokenEnum.ACTIVATE.token_type
     lifetime = ActionTokenEnum.ACTIVATE.lifetime
+
+
+class RecoverToken(ActionToken):
+    token_type = ActionTokenEnum.RECOVERY_PASSWORD.token_type
+    lifetime = ActionTokenEnum.RECOVERY_PASSWORD.lifetime
 
 
 class JWTService:

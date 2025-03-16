@@ -1,5 +1,5 @@
 from django.contrib.auth import get_user_model
-from rest_framework.generics import CreateAPIView, RetrieveAPIView, ListAPIView
+from rest_framework.generics import CreateAPIView, RetrieveAPIView, ListAPIView, RetrieveDestroyAPIView
 from rest_framework.permissions import IsAuthenticated
 
 from apps.all_users_info.users.serializers import UserSerializer
@@ -30,7 +30,7 @@ class AdminCreateManagerView(CreateAPIView):
         serializer.save(is_staff=True, is_superuser=False)
 
 
-class UserRetrieveView(RetrieveAPIView):
+class UserRetrieveView(RetrieveDestroyAPIView):
     """
         get: Retrieve a user by id
     """

@@ -13,8 +13,8 @@ class UserModel(AbstractBaseUser, BaseModel, PermissionsMixin):
         ordering = ['-id']
 
     email = models.EmailField(unique=True)
-    is_active = models.BooleanField(default=True)
-    is_staff = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=False)
+    is_staff = models.BooleanField(default=False)
     role_type = models.CharField(choices=RoleType.choices, max_length=20, default=RoleType.MANAGER)
 
     USERNAME_FIELD = 'email'

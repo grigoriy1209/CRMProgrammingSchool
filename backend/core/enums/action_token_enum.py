@@ -6,7 +6,10 @@ class ActionTokenEnum(Enum):
     ACTIVATE = (
         'activate',
         timedelta(minutes=30),
-
+    )
+    RECOVERY_PASSWORD = (
+        "recovery_password",
+        timedelta(minutes=0),
     )
 
     def __init__(self, token_type, lifetime):
