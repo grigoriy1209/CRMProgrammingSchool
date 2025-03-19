@@ -1,6 +1,7 @@
 from rest_framework import status
 from rest_framework.exceptions import AuthenticationFailed, NotFound
 from rest_framework.generics import GenericAPIView, get_object_or_404
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
 from apps.all_users_info.auth.serializers import EmailSerializer, UserModel, PasswordSerializer
@@ -14,17 +15,16 @@ class ActivateUserView(GenericAPIView):
     """
         patch: activate user
     """
-    permission_classes = (IsManager,)
+    permission_classes = (AllowAny,)
 
     def get_serializer_class(self):
         pass
 
     def patch(self, *args, **kwargs):
-        token = kwargs.get('token')
+        token = kwargs['token']
         try:
             user = JWTService.verify_token(token, ActionToken)
             user.is_active = True
-            user.is_staff = True
             user.save()
             serializer = UserSerializer(user)
             return Response(serializer.data, status=status.HTTP_200_OK)

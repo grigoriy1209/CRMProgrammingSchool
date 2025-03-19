@@ -9,7 +9,7 @@ class ActionTokenEnum(Enum):
     )
     RECOVERY_PASSWORD = (
         "recovery_password",
-        timedelta(minutes=0),
+        timedelta(minutes=10),
     )
 
     def __init__(self, token_type, lifetime):

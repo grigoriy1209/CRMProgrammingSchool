@@ -9,11 +9,13 @@ from core.enums.action_token_enum import ActionTokenEnum
 from core.exeptions.jwt_exeption import JWTException
 
 UserModel: User = get_user_model()
+
 ActionTokenClassType = Type[BlacklistMixin | Token]
 
 
 class ActionToken(BlacklistMixin, Token):
-    pass
+    token_type = None
+    lifetime = None
 
 
 class ActivateToken(ActionToken):

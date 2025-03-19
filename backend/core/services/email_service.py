@@ -17,10 +17,6 @@ class EmailService:
         msg.send()
 
     @classmethod
-    def send_test(cls):
-        cls.__send_email("grigoriyvorobiov1@gmail.com", "test.html", {}, 'Test Email')
-
-    @classmethod
     def register(cls, user: User):
         token = JWTService.create_token(user, ActivateToken)
         url = f'http://localhost:3000/activate/{token}'
