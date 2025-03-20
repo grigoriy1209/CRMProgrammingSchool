@@ -4,28 +4,25 @@ from django.contrib.auth import get_user_model
 from rest_framework.generics import get_object_or_404
 from rest_framework_simplejwt.tokens import BlacklistMixin, Token
 
-from core.dataclasses.user_dataclass import User
 from core.enums.action_token_enum import ActionTokenEnum
 from core.exeptions.jwt_exeption import JWTException
 
-UserModel: User = get_user_model()
-
+UserModel = get_user_model()
 ActionTokenClassType = Type[BlacklistMixin | Token]
 
 
 class ActionToken(BlacklistMixin, Token):
-    token_type = None
-    lifetime = None
+    pass
 
 
 class ActivateToken(ActionToken):
     token_type = ActionTokenEnum.ACTIVATE.token_type
-    lifetime = ActionTokenEnum.ACTIVATE.lifetime
+    lifetime = ActionTokenEnum.ACTIVATE.life_time
 
 
-class RecoverToken(ActionToken):
+class RecoveryToken(ActionToken):
     token_type = ActionTokenEnum.RECOVERY_PASSWORD.token_type
-    lifetime = ActionTokenEnum.RECOVERY_PASSWORD.lifetime
+    lifetime = ActionTokenEnum.RECOVERY_PASSWORD.life_time
 
 
 class JWTService:
@@ -34,11 +31,11 @@ class JWTService:
         return token_class.for_user(user)
 
     @staticmethod
-    def verify_token(token, token_class: ActionTokenClassType):
+    def validate_token(token, token_class: ActionTokenClassType):
         try:
             token_res = token_class(token)
             token_res.check_blacklist()
-        except Exception:
+        except (Exception,):
             raise JWTException
 
         token_res.blacklist()

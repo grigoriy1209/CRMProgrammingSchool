@@ -1,9 +1,18 @@
 from django_filters import rest_framework as filters
 
+from apps.applications.choices.course_choices import Course
 from apps.applications.models import OrderModels
 
 
 class ApplicateFilter(filters.FilterSet):
+
+    age_lt = filters.NumberFilter('age', 'lt')
+    age_gt = filters.NumberFilter('age', 'gt')
+    age_in = filters.BaseInFilter('age')
+    age_range = filters.RangeFilter('age')
+
+    course = filters.CharFilter("course", choices=Course.choices)
+
     order = filters.OrderingFilter(
         fields=(
             ('id', 'id'),

@@ -1,10 +1,11 @@
 from django.contrib.auth import get_user_model
+from django.core import validators as V
 from django.db import models
 
 from apps.applications.choices.course_choices import Course, CourseFormat, CourseType
 from apps.applications.choices.status_type import StatusType
+from apps.applications.regex import ApplicationRegex
 from apps.groups.models import GroupModel
-
 from core.dataclasses.user_dataclass import User
 
 UserModel: User = get_user_model()
@@ -15,15 +16,16 @@ class OrderModels(models.Model):
         db_table = 'orders'
         ordering = ['-id']
 
-    name = models.CharField(max_length=25, )
+    name = models.CharField(max_length=25,
+                            validators=[V.RegexValidator(ApplicationRegex.NAME.pattern, ApplicationRegex.NAME.msg)])
     surname = models.CharField(max_length=25, )
     email = models.EmailField(max_length=100, )
     phone = models.CharField(max_length=12, )
-    age = models.IntegerField()
+    age = models.IntegerField(validators=[ApplicationRegex.AGE.pattern, ApplicationRegex.AGE.msg])
     course = models.CharField(max_length=10, choices=Course.choices, )
     course_format = models.CharField(max_length=15, choices=CourseFormat.choices, )
     course_type = models.CharField(max_length=100, choices=CourseType.choices, )
-    sum = models.IntegerField()
+    sum = models.IntegerField(validators=[V.MinValueValidator(1), V.MaxValueValidator(1_000_000)])
     alreadyPaid = models.IntegerField(default=0, )
     created_at = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=15, choices=StatusType.choices, )
