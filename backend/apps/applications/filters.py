@@ -11,6 +11,10 @@ class ApplicateFilter(filters.FilterSet):
     age_in = filters.BaseInFilter('age')
     age_range = filters.RangeFilter('age')
 
+    name_endswith = filters.CharFilter("name", "endswith")
+
+
+
     course = filters.CharFilter("course", choices=Course.choices)
 
     order = filters.OrderingFilter(

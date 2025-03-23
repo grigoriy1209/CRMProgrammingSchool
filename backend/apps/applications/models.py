@@ -21,7 +21,7 @@ class OrderModels(models.Model):
     surname = models.CharField(max_length=25, )
     email = models.EmailField(max_length=100, )
     phone = models.CharField(max_length=12, )
-    age = models.IntegerField(validators=[ApplicationRegex.AGE.pattern, ApplicationRegex.AGE.msg])
+    age = models.IntegerField()
     course = models.CharField(max_length=10, choices=Course.choices, )
     course_format = models.CharField(max_length=15, choices=CourseFormat.choices, )
     course_type = models.CharField(max_length=100, choices=CourseType.choices, )
