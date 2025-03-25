@@ -5,17 +5,13 @@ from apps.applications.models import OrderModels
 
 
 class ApplicateFilter(filters.FilterSet):
-
     age_lt = filters.NumberFilter('age', 'lt')
     age_gt = filters.NumberFilter('age', 'gt')
-    age_in = filters.BaseInFilter('age')
+    age_in = filters.NumberFilter('age', 'in')
     age_range = filters.RangeFilter('age')
 
     name_endswith = filters.CharFilter("name", "endswith")
-
-
-
-    course = filters.CharFilter("course", choices=Course.choices)
+    course = filters.ChoiceFilter("course", choices=Course.choices)
 
     order = filters.OrderingFilter(
         fields=(
@@ -52,4 +48,7 @@ class ApplicateFilter(filters.FilterSet):
 
     class Meta:
         model = OrderModels
-        fields = ['order']
+        fields = ['id', 'name', 'surname', 'email',
+                  'phone', 'age', 'course', 'course_type',
+                  'course_format', 'status',
+                  'sum', 'alreadyPaid', 'created_at', ]

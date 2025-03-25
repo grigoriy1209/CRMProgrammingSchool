@@ -1,19 +1,16 @@
 from django.utils import timezone
-
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status
 from rest_framework.filters import OrderingFilter
 from rest_framework.generics import GenericAPIView, RetrieveUpdateAPIView, get_object_or_404
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
-from django_filters.rest_framework import DjangoFilterBackend
-
 from apps.all_users_info.users.permissions import IsManager
 from apps.applications.filters import ApplicateFilter
 from apps.applications.models import CommentModels, OrderModels
 from apps.applications.serializers import ApplicationSerializer, CommentSerializer
 from apps.groups.models import GroupModel
-
 from core.pagination import PagePagination
 
 
@@ -29,21 +26,22 @@ class ApplicationListView(GenericAPIView):
     permission_classes = (AllowAny,)
 
     def get_queryset(self):
-        queryset = self.queryset
+        queryset = super().get_queryset()
         order_by = self.request.query_params.get('order', '')
         if order_by:
             return self.queryset.order_by(order_by)
         return queryset
 
     def get(self, *args, **kwargs):
-        queryset = self.get_queryset()
+        queryset = self.filter_queryset(self.get_queryset())
         page = self.paginate_queryset(queryset)
+
         if page is not None:
             serializer = self.get_serializer(page, many=True)
             return self.get_paginated_response(serializer.data)
-        else:
-            serializer = self.get_serializer(queryset, many=True)
-            return Response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
 
 
 class ApplicationRetrieveUpdateView(RetrieveUpdateAPIView):
