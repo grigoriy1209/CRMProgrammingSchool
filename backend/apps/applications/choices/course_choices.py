@@ -2,12 +2,12 @@ from django.db import models
 
 
 class Course(models.TextChoices):
-    FX = 'FX'
-    QACX = 'QACX'
-    JCX = 'JCX'
-    JSCX = 'JSCX'
-    FE = 'FE'
-    PCX = 'PCX'
+    FX = "FX"
+    QACX = "QACX"
+    JCX = "JCX"
+    JSCX = "JSCX"
+    FE = "FE"
+    PCX = "PCX"
 
 
 class CourseType(models.TextChoices):
