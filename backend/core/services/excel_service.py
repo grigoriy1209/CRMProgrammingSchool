@@ -9,7 +9,7 @@ from openpyxl import Workbook
 class ExcelService:
     HEADERS = ['id', 'name', 'surname', 'email', 'phone', 'age', 'course',
                'course_type', 'course_format', 'status', 'sum', 'alreadyPaid',
-               'created_at', 'manager', 'group', 'msg']
+               'created_at', 'manager', 'group',]
 
     @staticmethod
     def generate_excel(orders):
@@ -32,7 +32,7 @@ class ExcelService:
                 order.status,
                 order.sum,
                 order.alreadyPaid,
-                localtime(order.created_at).strftime('%d.%m.%Y %H:%M:%S'),
+                localtime(order.created_at).strftime('%d.%m.%Y %H:%M'),
                 str(order.manager) if order.manager else "",
                 str(order.group) if order.group else "",
 
