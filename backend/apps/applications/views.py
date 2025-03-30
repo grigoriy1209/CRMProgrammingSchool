@@ -1,17 +1,22 @@
+from django.db import transaction
 from django.utils import timezone
-from django_filters.rest_framework import DjangoFilterBackend
+
 from rest_framework import status
 from rest_framework.filters import OrderingFilter
 from rest_framework.generics import GenericAPIView, RetrieveUpdateAPIView, get_object_or_404
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
+from django_filters.rest_framework import DjangoFilterBackend
+
 from apps.all_users_info.users.permissions import IsManager
 from apps.applications.filters import ApplicateFilter
 from apps.applications.models import CommentModels, OrderModels
 from apps.applications.serializers import ApplicationSerializer, CommentSerializer
 from apps.groups.models import GroupModel
+
 from core.pagination import PagePagination
+from core.services.excel_service import ExcelService
 
 
 class ApplicationListView(GenericAPIView):
@@ -32,7 +37,12 @@ class ApplicationListView(GenericAPIView):
             return self.queryset.order_by(order_by)
         return queryset
 
-    def get(self, *args, **kwargs):
+    def get(self,request, *args, **kwargs):
+
+        if request.query_params.get("export") == "excel":
+            queryset = self.filter_queryset(self.get_queryset())
+            return ExcelService.generate_excel_file(queryset)
+
         queryset = self.filter_queryset(self.get_queryset())
         page = self.paginate_queryset(queryset)
 
@@ -83,20 +93,25 @@ class AddCommentView(GenericAPIView):
 
     def post(self, request, *args, **kwargs):
         order_id = kwargs.get('pk')
-        try:
-            order = OrderModels.objects.get(id=order_id)
-        except OrderModels.DoesNotExist:
-            return Response({'message': 'Order not found'}, status=status.HTTP_404_NOT_FOUND)
+        order = get_object_or_404(OrderModels, id=order_id)
 
-        if order.manager is None and order.status in [None, 'New']:
-            order.manager = request.user
-            order.status = 'InWork'
+        if order.manager is not None and order.manager != request.user:
+            return Response({'message': "You can only comment on orders that are unassigned or assigned to you"},
+                            status=status.HTTP_403_FORBIDDEN)
+
+        comment_data = request.data.get('comment')
+        if not comment_data:
+            return Response({'message': "Comment required"}, status=status.HTTP_400_BAD_REQUEST, )
+
+        with transaction.atomic():
+            order = OrderModels.objects.select_for_update().get(id=order_id)
+
+            if order.manager is None:
+                order.manager = request.user
+
+            if order.status in [None, 'New']:
+                order.status = 'InWork'
             order.save()
-
-        if order.status in ['InWork', 'New']:
-            comment_data = request.data.get('comment')
-            if not comment_data:
-                return Response({'message': 'Comment is required'}, status=status.HTTP_400_BAD_REQUEST)
 
             comment = CommentModels.objects.create(
                 order=order,
@@ -105,8 +120,8 @@ class AddCommentView(GenericAPIView):
                 created_at=timezone.now(),
             )
 
-            serializer = CommentSerializer(comment)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        serializer = CommentSerializer(comment)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-        return Response({'message': f'Cannot process application with status {order.status}'},
-                        status=status.HTTP_400_BAD_REQUEST)
+
+

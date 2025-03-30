@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist',
     'drf_yasg',
 
+
     # my_apps
     'apps.all_users_info.users',
     'apps.all_users_info.auth',

@@ -16,10 +16,6 @@ class CommentSerializer(serializers.ModelSerializer):
 
 class ApplicationSerializer(serializers.ModelSerializer):
     comments = CommentSerializer(many=True, read_only=True)
-    # manager = serializers.CharField(source="manager.profile.surname", read_only=True)
-    # group = serializers.CharField(source="group.name", read_only=True)
-    # manager = UserSerializer(read_only=True,)
-    # group = GroupSerializer(read_only=True)
     manager = serializers.SerializerMethodField()
     group = serializers.PrimaryKeyRelatedField(read_only=True)
 

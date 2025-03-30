@@ -8,4 +8,5 @@ urlpatterns = [
     path('/<int:pk>', ApplicationRetrieveUpdateView.as_view(), name='application_retrieve_update'),
     path('/<int:pk>/add_comment', AddCommentView.as_view(), name='application_add_comment'),
 
+
 ]
