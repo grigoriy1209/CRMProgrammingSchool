@@ -1,20 +1,17 @@
 from django.db import transaction
 from django.utils import timezone
-
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status
 from rest_framework.filters import OrderingFilter
 from rest_framework.generics import GenericAPIView, RetrieveUpdateAPIView, get_object_or_404
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
-from django_filters.rest_framework import DjangoFilterBackend
-
 from apps.all_users_info.users.permissions import IsManager
 from apps.applications.filters import ApplicateFilter
 from apps.applications.models import CommentModels, OrderModels
 from apps.applications.serializers import ApplicationSerializer, CommentSerializer
 from apps.groups.models import GroupModel
-
 from core.pagination import PagePagination
 from core.services.excel_service import ExcelService
 
@@ -37,7 +34,7 @@ class ApplicationListView(GenericAPIView):
             return self.queryset.order_by(order_by)
         return queryset
 
-    def get(self,request, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
 
         if request.query_params.get("export") == "excel":
             queryset = self.filter_queryset(self.get_queryset())
@@ -83,6 +80,18 @@ class ApplicationRetrieveUpdateView(RetrieveUpdateAPIView):
         return super().patch(request, *args, **kwargs)
 
 
+class OrdersMeView(GenericAPIView):
+    """
+        get:requests of the logged-in user
+    """
+    permission_classes = (IsManager,)
+
+    def get(self, request, *args, **kwargs):
+        orders = OrderModels.objects.filter(manager=request.user)
+        serializer = ApplicationSerializer(orders, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 class AddCommentView(GenericAPIView):
     """
     post: Add a comment to the application and update status and manager if necessary.
@@ -122,6 +131,3 @@ class AddCommentView(GenericAPIView):
 
         serializer = CommentSerializer(comment)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-
-

@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.core import validators as V
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 
 from apps.applications.choices.course_choices import Course, CourseFormat, CourseType
@@ -18,10 +19,13 @@ class OrderModels(models.Model):
 
     name = models.CharField(max_length=25,
                             validators=[V.RegexValidator(ApplicationRegex.NAME.pattern, ApplicationRegex.NAME.msg)])
-    surname = models.CharField(max_length=25, )
-    email = models.EmailField(max_length=100, )
-    phone = models.CharField(max_length=12, )
-    age = models.IntegerField()
+    surname = models.CharField(max_length=25,
+                               validators=[
+                                   V.RegexValidator(ApplicationRegex.SURNAME.pattern, ApplicationRegex.SURNAME.msg)])
+    email = models.EmailField(max_length=100,)
+    phone = models.CharField(max_length=12,
+                             validators=[V.RegexValidator(ApplicationRegex.PHONE.pattern, ApplicationRegex.PHONE.msg)])
+    age = models.IntegerField(validators=[MinValueValidator(17),MaxValueValidator(99)])
     course = models.CharField(max_length=10, choices=Course.choices, )
     course_format = models.CharField(max_length=15, choices=CourseFormat.choices, )
     course_type = models.CharField(max_length=100, choices=CourseType.choices, )
