@@ -12,6 +12,7 @@ class UserManager(Manager):
             raise ValueError('User must have a password')
         email = self.normalize_email(email)
         user = self.model(email=email, **extra_fields)
+        user.set_password(password)
 
         user.save()
         return user
@@ -22,8 +23,6 @@ class UserManager(Manager):
         extra_fields.setdefault('is_active', True)
 
         extra_fields.setdefault('role_type', RoleType.ADMINISTRATOR)
-        extra_fields.setdefault('name', "admin")
-        extra_fields.setdefault('surname', "administer")
 
         if extra_fields.get('is_staff') is not True:
             raise ValueError('Superuser must have is_staff=True.')
@@ -33,4 +32,11 @@ class UserManager(Manager):
             raise ValueError('Superuser must have is_active=True.')
 
         superuser = self.create_user(email=email, password=password, **extra_fields)
+        from apps.all_users_info.users.models import ProfileModel
+        ProfileModel.objects.create(
+            user=superuser,
+            name="Admin",
+            surname="Administer",
+            phone="555555555"
+        )
         return superuser
