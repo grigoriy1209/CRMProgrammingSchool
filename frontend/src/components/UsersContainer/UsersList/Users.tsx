@@ -2,6 +2,7 @@ import {IUser} from "../../../interfaces";
 import {FC} from "react";
 import dayjs from "dayjs";
 import {useAppDispatch, useAppSelector} from "../../../hooks/reduxHooks";
+import {Pagination} from "../../OrderContainer";
 
 interface IProps {
     users: IUser[];
@@ -24,7 +25,7 @@ const Users: FC<IProps> = ({users}) => {
                             <p><strong>Email:</strong> {user.email}</p>
                             <p><strong>Name:</strong> {user.profile?.name ?? "N/A"}</p>
                             <p><strong>Surname:</strong> {user.profile?.surname ?? "N/A"}</p>
-                            <p><strong>IS_Active:</strong> {user.is_active ? "True" : "False"}</p>
+                            <p><strong>Is_Active:</strong> {user.is_active ? "True" : "False"}</p>
                             <p><strong>Last
                                 Login:</strong> {user.last_login ? dayjs(user.last_login).format("MMMM DD, YYYY"):""}
                             </p>
@@ -35,8 +36,9 @@ const Users: FC<IProps> = ({users}) => {
                     ))}
                 </ul>
             ) : (
-                <p>Немає користувачів.</p>
+                <p>not users</p>
             )}
+            <Pagination/>
         </div>
     );
 };

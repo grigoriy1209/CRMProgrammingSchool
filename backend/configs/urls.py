@@ -6,13 +6,13 @@ The `urlpatterns` list routes URLs to views. For more information please see:
 Examples:
 Function views
     1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
+    2. Add a URL to urlpatterns:  path('', views. home, name='home')
 Class-based views
     1. Add an import:  from other_app.views import Home
     2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
 Including another URLconf
     1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
+    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls')
 """
 
 from django.urls import include, path
@@ -30,7 +30,7 @@ schema_view = get_schema_view(
         contact=openapi.Contact(email="grigoriyv1209@gmail.com"),
     ),
     public=True,
-    permission_classes=[AllowAny,],
+    permission_classes=[AllowAny, ],
 )
 urlpatterns = [
     path('api/all_users/users', include('apps.all_users_info.users.urls')),

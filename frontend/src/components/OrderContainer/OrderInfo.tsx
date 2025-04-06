@@ -24,14 +24,16 @@ const OrderInfo: FC<IProps> = ({ order}) => {
             }}
         >
             <Typography>
-                <strong></strong> {order.manager || ""}
-            </Typography>
-            <Typography>
                 <strong>msg:</strong> {order.msg || "null"}
             </Typography>
             <Typography>
                 <strong>utm:</strong> {order.utm || "null"}
             </Typography>
+
+            <Typography>
+                <strong></strong> {order.manager || ""}
+            </Typography>
+            <Typography></Typography>
             <Typography>
                 <FormComments orderId={order.orderId}/>
             </Typography>

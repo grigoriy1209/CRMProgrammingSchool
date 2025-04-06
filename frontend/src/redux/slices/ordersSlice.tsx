@@ -97,8 +97,10 @@ const ordersSlice = createSlice({
                 state.orderInfo = action.payload;
             })
             .addCase(addComment.fulfilled, (state, action: PayloadAction<IOrder | null>) => {
-                state.orderInfo = action.payload;
-                state.error = null;
+                if (action.payload) {
+                    state.orderInfo = action.payload;
+                    state.error = null;
+                }
             })
             .addCase(getAll.rejected, (state, action) => {
                 state.error = action.payload as string;
