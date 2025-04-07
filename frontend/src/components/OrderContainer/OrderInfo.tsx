@@ -16,11 +16,11 @@ const OrderInfo: FC<IProps> = ({ order}) => {
     return (
         <Box
             sx={{
-                width: 400,
-                margin: "100px auto",
-                padding: 2,
-                backgroundColor: "white",
-                borderRadius: "8px",
+
+                margin: "0px",
+                padding: 0,
+                backgroundColor: "red",
+                borderRadius: "0px",
             }}
         >
             <Typography>

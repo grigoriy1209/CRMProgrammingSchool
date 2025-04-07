@@ -1,41 +1,37 @@
-import React, { FC, useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { format } from "date-fns";
+import React, {FC, useEffect, useState} from "react";
+import {Pagination} from "./Pagination";
+import {useAppDispatch, useAppSelector} from "../../hooks/reduxHooks";
+import {useLocation} from "react-router-dom";
+import {orderActions} from "../../redux/slices/ordersSlice";
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+
 import {
-    Box,
-    Modal,
-    Paper,
+    Accordion, AccordionDetails,
+    AccordionSummary, Box, Paper,
     Table,
     TableBody,
     TableCell,
-    Container,
     TableContainer,
     TableHead,
     TableRow,
     Typography
 } from "@mui/material";
-
-import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks";
-import { orderActions } from "../../redux/slices/ordersSlice";
-import { IOrder } from "../../interfaces";
-import { Pagination } from "./Pagination";
-import { OrderInfo } from "./OrderInfo";
+import {format} from "date-fns/format";
+import {OrderInfo} from "./OrderInfo";
+import {IOrder} from "../../interfaces";
 
 interface IColumn {
     key: keyof IOrder;
     label: string;
 }
-
 const OrdersList: FC = () => {
     const dispatch = useAppDispatch();
     const location = useLocation();
-    const navigate = useNavigate();
 
     const orders = useAppSelector((state) => state.orders.orders);
     const error = useAppSelector((state) => state.orders.error);
-    const orderInfo = useAppSelector((state) => state.orders.orderInfo);
 
-    const [open, setOpen] = useState(false);
+    const [expandedOrderId, setExpandedOrderId] = useState<number | null>(null);
 
     const getPageFromUrl = (search: string) => {
         const queryParams = new URLSearchParams(search);
@@ -50,40 +46,36 @@ const OrdersList: FC = () => {
     if (error) return <Typography variant="h6" color="error">Error: {error}</Typography>;
 
     const columns: IColumn[] = [
-        { key: "id", label: "ID" },
-        { key: "name", label: "Name" },
-        { key: "surname", label: "Surname" },
-        { key: "email", label: "Email" },
-        { key: "phone", label: "Phone" },
-        { key: "age", label: "Age" },
-        { key: "course", label: "Course" },
-        { key: "course_type", label: "Course Type" },
-        { key: "course_format", label: "Course Format" },
-        { key: "status", label: "Status" },
-        { key: "sum", label: "Sum" },
-        { key: "alreadyPaid", label: "Already Paid" },
-        { key: "group", label: "Group" },
-        { key: "created_at", label: "Created At" },
-        { key: "manager", label: "Manager" },
+        {key: "id", label: "ID"},
+        {key: "name", label: "Name"},
+        {key: "surname", label: "Surname"},
+        {key: "email", label: "Email"},
+        {key: "phone", label: "Phone"},
+        {key: "age", label: "Age"},
+        {key: "course", label: "Course"},
+        {key: "course_type", label: "Course Type"},
+        {key: "course_format", label: "Course Format"},
+        {key: "status", label: "Status"},
+        {key: "sum", label: "Sum"},
+        {key: "alreadyPaid", label: "Already Paid"},
+        {key: "group", label: "Group"},
+        {key: "created_at", label: "Created At"},
+        {key: "manager", label: "Manager"},
     ];
 
     const handleRowClick = (orderId: number) => {
-        const selectedOrder = orders.find((order) => order.id === orderId);
-        if (selectedOrder) {
-            dispatch(orderActions.setOrderInfo(selectedOrder));
-            setOpen(true);
-        }
+        setExpandedOrderId(prev => prev === orderId ? null : orderId);
     };
 
     return (
-        <Box sx={{ width: "100%", backgroundColor: "#f5f5f5", padding: 0, borderRadius: "8px" }}>
+        <Box sx={{width: "100%", backgroundColor: "#f5f5f5", padding: 0, margin:0 ,borderRadius: "0px"}}>
             {orders.length ? (
                 <TableContainer component={Paper}>
                     <Table size="small">
                         <TableHead>
                             <TableRow>
                                 {columns.map((col) => (
-                                    <TableCell key={col.key} style={{ fontWeight: "bold", backgroundColor: "#e3f2fd" }}>
+                                    <TableCell key={col.key} sx={{fontWeight: "bold", backgroundColor: "#e3f2fd"}}>
                                         {col.label}
                                     </TableCell>
                                 ))}
@@ -91,49 +83,53 @@ const OrdersList: FC = () => {
                         </TableHead>
                         <TableBody>
                             {orders.map((order) => (
-                                <TableRow
-                                    key={order.id}
-                                    onClick={() => handleRowClick(order.id)}
-                                    style={{ cursor: "pointer" }}
-                                >
-                                    {columns.map((col) => (
-                                        <TableCell key={col.key}>
-                                            {col.key === "created_at"
-                                                ? format(new Date(order.created_at), "MMMM dd, yyyy")
-                                                : order[col.key] || "null"}
-                                        </TableCell>
-                                    ))}
-                                </TableRow>
+                                <React.Fragment key={order.id}>
+                                    <TableRow
+                                        onClick={() => handleRowClick(order.id)}
+                                        style={{cursor: "pointer"}}
+                                    >
+                                        {columns.map((col) => (
+                                            <TableCell key={col.key}>
+                                                {col.key === "created_at"
+                                                    ? format(new Date(order.created_at), "MMMM dd, yyyy")
+                                                    : order[col.key] || "null"}
+                                            </TableCell>
+                                        ))}
+                                    </TableRow>
+
+                                    {expandedOrderId === order.id && (
+                                        <TableRow>
+                                            <TableCell colSpan={columns.length}>
+                                                <Accordion expanded>
+                                                    <AccordionSummary
+                                                        expandIcon={<ExpandMoreIcon />}
+                                                        aria-controls={`order-${order.id}-content`}
+                                                        id={`order-${order.id}-header`}
+                                                    >
+                                                        {/*<Typography component="span">Order Details (ID: {order.id})</Typography>*/}
+                                                    </AccordionSummary>
+                                                    <AccordionDetails>
+                                                        <OrderInfo order={order} onClose={() => setExpandedOrderId(null)} />
+                                                    </AccordionDetails>
+                                                </Accordion>
+                                            </TableCell>
+                                        </TableRow>
+                                    )}
+                                </React.Fragment>
                             ))}
                         </TableBody>
                     </Table>
                 </TableContainer>
             ) : (
-                <Typography variant="h6" sx={{ marginTop: 2 }}>
+                <Typography variant="h6" sx={{marginTop: 2}}>
                     No orders found
                 </Typography>
             )}
             <Pagination />
-
-            <Modal open={open} onClose={() => setOpen(false)}>
-                <Box
-                    sx={{
-                        width: "400px",
-                        margin: "100px auto",
-                        backgroundColor: "white",
-                        padding: 2,
-                        borderRadius: "8px",
-                    }}
-                >
-                    {orderInfo ? (
-                        <OrderInfo order={orderInfo} onClose={() => setOpen(false)} />
-                    ) : (
-                        <Typography>Loading...</Typography>
-                    )}
-                </Box>
-            </Modal>
         </Box>
     );
 };
+export {
+    OrdersList
+}
 
-export { OrdersList };
