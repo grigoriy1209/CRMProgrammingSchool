@@ -106,7 +106,6 @@ const OrdersList: FC = () => {
                                                         aria-controls={`order-${order.id}-content`}
                                                         id={`order-${order.id}-header`}
                                                     >
-                                                        {/*<Typography component="span">Order Details (ID: {order.id})</Typography>*/}
                                                     </AccordionSummary>
                                                     <AccordionDetails>
                                                         <OrderInfo order={order} onClose={() => setExpandedOrderId(null)} />

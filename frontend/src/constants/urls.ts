@@ -16,7 +16,7 @@ const urls = {
     },
     application: {
         base: application,
-        byId: (id: number): string => `application/${id}`,
+        byId: (orderId: number): string => `application/${orderId}`,
         addComment: (orderId: number): string => `application/${orderId}/addComment`,
 }
 }

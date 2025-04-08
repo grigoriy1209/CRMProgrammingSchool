@@ -12,7 +12,6 @@ const OrderInfo: FC<IProps> = ({ order}) => {
     if (!order) {
         return <Typography>Завантаження...</Typography>;
     }
-
     return (
         <Box
             sx={{

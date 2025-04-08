@@ -13,10 +13,16 @@ const orderServices = {
             return null;
         }
     },
-    byId: async (id: string): Promise<IOrder> => {
-        const response = await apiServices.get<IOrder>(urls.application.byId(+id));
-        console.log("Response_ID:", response);
-        return response.data;
+    byId: async (orderId: string): Promise<IOrder> => {
+        try {
+            const response = await apiServices.get<IOrder>(urls.application.byId(+orderId));
+            console.log("Response_ID:", response);
+            return response.data;
+        }catch (error){
+            console.error("Error fetching order:", error);
+            throw error;
+        }
+
     },
     addComments: async (orderId: string, comment: string, manager: string, status: string): Promise<IOrder | null> => {
         try {
