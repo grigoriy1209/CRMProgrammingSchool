@@ -1,17 +1,20 @@
 from django.db import transaction
 from django.utils import timezone
-from django_filters.rest_framework import DjangoFilterBackend
+
 from rest_framework import status
 from rest_framework.filters import OrderingFilter
 from rest_framework.generics import GenericAPIView, RetrieveUpdateAPIView, get_object_or_404
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
+from django_filters.rest_framework import DjangoFilterBackend
+
 from apps.all_users_info.users.permissions import IsManager
 from apps.applications.filters import ApplicateFilter
 from apps.applications.models import CommentModels, OrderModels
 from apps.applications.serializers import ApplicationSerializer, CommentSerializer
 from apps.groups.models import GroupModel
+
 from core.pagination import PagePagination
 from core.services.excel_service import ExcelService
 
@@ -25,7 +28,7 @@ class ApplicationListView(GenericAPIView):
     filterset_class = ApplicateFilter
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     pagination_class = PagePagination
-    permission_classes = (AllowAny,)
+    permission_classes = (IsManager,)
 
     def get_queryset(self):
         queryset = super().get_queryset()
