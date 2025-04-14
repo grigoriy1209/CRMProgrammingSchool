@@ -28,7 +28,6 @@ class ProfileModel(BaseModel):
 
     name = models.CharField(max_length=20)
     surname = models.CharField(max_length=20)
-    phone = models.CharField(max_length=20)
     user = models.OneToOneField(UserModel, on_delete=models.CASCADE, related_name='profile')
 
     def get_full_name(self):

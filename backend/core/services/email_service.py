@@ -6,7 +6,7 @@ from django.template.loader import get_template
 from configs.celery import app
 
 from core.dataclasses.user_dataclass import User
-from core.services.jwt_service import ActivateToken, JWTService, RecoveryToken
+from core.services.jwt_service import ActivateToken, JWTService, RecoveryToken, SetPasswordToken
 
 
 class EmailService:
@@ -28,6 +28,17 @@ class EmailService:
             'register.html',
             {'name': user.profile.name, 'url': url},
             'Register Email'
+        )
+
+    @classmethod
+    def set_password(cls, user: User):
+        token = JWTService.create_token(user, SetPasswordToken)
+        url = f'http://localhost:3000/set-password/{token}'
+        cls.__send_email.delay(
+            user.email,
+            'set_password.html',
+            {'name': user.profile.name, 'url': url},
+            'Set Password'
         )
 
     @classmethod

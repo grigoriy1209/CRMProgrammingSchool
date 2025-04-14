@@ -4,13 +4,14 @@ from django.db.transaction import atomic
 from rest_framework import serializers
 
 from apps.all_users_info.users.models import ProfileModel, UserModel
+
 from core.services.email_service import EmailService
 
 
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProfileModel
-        fields = ('id', 'name', 'surname', 'phone', 'created_at', 'updated_at')
+        fields = ('id', 'name', 'surname', 'created_at', 'updated_at')
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -21,7 +22,7 @@ class UserSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'email',
-            'password',
+            # 'password',
             'is_active',
             'is_staff',
             'is_superuser',
@@ -48,7 +49,6 @@ class UserSerializer(serializers.ModelSerializer):
     @atomic
     def create(self, validated_data):
         profile_data = validated_data.pop('profile')
-
         user = UserModel.objects.create_user(**validated_data)
         profile = ProfileModel.objects.create(**profile_data, user=user)
         EmailService.register(user)

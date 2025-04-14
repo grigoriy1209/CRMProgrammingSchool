@@ -7,6 +7,10 @@ class ActionTokenEnum(Enum):
         'activate',
         timedelta(minutes=30),
     )
+    SET_PASSWORD = (
+        'set_password',
+        timedelta(minutes=10),
+    )
     RECOVERY_PASSWORD = (
         "recovery_password",
         timedelta(minutes=10),

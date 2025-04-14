@@ -1,7 +1,9 @@
 from typing import Type
 
 from django.contrib.auth import get_user_model
+
 from rest_framework.generics import get_object_or_404
+
 from rest_framework_simplejwt.tokens import BlacklistMixin, Token
 
 from core.enums.action_token_enum import ActionTokenEnum
@@ -18,6 +20,11 @@ class ActionToken(BlacklistMixin, Token):
 class ActivateToken(ActionToken):
     token_type = ActionTokenEnum.ACTIVATE.token_type
     lifetime = ActionTokenEnum.ACTIVATE.life_time
+
+
+class SetPasswordToken(ActionToken):
+    token_type = ActionTokenEnum.SET_PASSWORD.token_type
+    lifetime = ActionTokenEnum.SET_PASSWORD.life_time
 
 
 class RecoveryToken(ActionToken):

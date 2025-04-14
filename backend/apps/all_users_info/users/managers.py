@@ -5,15 +5,14 @@ from apps.all_users_info.users.choices import RoleType
 
 class UserManager(Manager):
 
-    def create_user(self, email=None, password=None, **extra_fields):
+    def create_user(self, email=None, **extra_fields):
         if not email:
             raise ValueError('User must have an email address')
-        if not password:
-            raise ValueError('User must have a password')
+        # if not password:
+        #     raise ValueError('User must have a password')
         email = self.normalize_email(email)
         user = self.model(email=email, **extra_fields)
-        user.set_password(password)
-
+        user.set_unusable_password()
         user.save()
         return user
 
@@ -32,6 +31,7 @@ class UserManager(Manager):
             raise ValueError('Superuser must have is_active=True.')
 
         superuser = self.create_user(email=email, password=password, **extra_fields)
+
         from apps.all_users_info.users.models import ProfileModel
         ProfileModel.objects.create(
             user=superuser,
