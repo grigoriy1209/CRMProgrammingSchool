@@ -6,7 +6,6 @@ from apps.applications.models import OrderModels
 
 
 class ApplicateFilter(filters.FilterSet):
-
     age = filters.NumberFilter(field_name='age', lookup_expr='exact')
     name = filters.CharFilter(field_name="name", lookup_expr="iexact")
     surname = filters.CharFilter(field_name="surname", lookup_expr="iexact")
@@ -60,3 +59,9 @@ class ApplicateFilter(filters.FilterSet):
             'sum', 'alreadyPaid', 'created_at',
         ]
 
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        super().__init__(*args, **kwargs)
+
+        if self.request and hasattr(self.request, 'user'):
+            self.queryset = self.queryset.filter(manager=self.request.user)
