@@ -16,7 +16,7 @@ class ApplicateFilter(filters.FilterSet):
     course = filters.ChoiceFilter("course", choices=Course.choices)
     course_type = filters.ChoiceFilter(field_name="course_type", choices=CourseType.choices)
     course_format = filters.ChoiceFilter(field_name="course_format", choices=CourseFormat.choices)
-    status = filters.ChoiceFilter(field_name="status",choices=StatusType.choices)
+    status = filters.ChoiceFilter(field_name="status", choices=StatusType.choices)
 
     created_at_range = filters.DateFromToRangeFilter(field_name="created_at")
 

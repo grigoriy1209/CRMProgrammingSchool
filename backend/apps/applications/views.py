@@ -4,8 +4,8 @@ from django.utils import timezone
 from rest_framework import status
 from rest_framework.filters import OrderingFilter
 from rest_framework.generics import GenericAPIView, RetrieveUpdateAPIView, get_object_or_404
-from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from django_filters.rest_framework import DjangoFilterBackend
 
@@ -38,11 +38,6 @@ class ApplicationListView(GenericAPIView):
         return queryset
 
     def get(self, request, *args, **kwargs):
-
-        if request.query_params.get("export") == "excel":
-            queryset = self.filter_queryset(self.get_queryset())
-            return ExcelService.generate_excel_file(queryset)
-
         queryset = self.filter_queryset(self.get_queryset())
         page = self.paginate_queryset(queryset)
 
@@ -52,6 +47,27 @@ class ApplicationListView(GenericAPIView):
 
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
+
+
+class ExportExcelView(APIView):
+    permission_classes = (IsManager,)
+
+    def post(self, request, *args, **kwargs):
+        ids = request.data.get('ids', [])
+
+        filter_data = {key: request.data.get(key) for key in ApplicateFilter.Meta.fields if request.data.get(key)}
+        filter_data['id'] = ids
+
+        if not filter_data:
+            orders = OrderModels.objects.filter(id__in=ids)
+        else:
+            filter_queryset = OrderModels.objects.all()
+            order_filter = ApplicateFilter(data=filter_data, queryset=filter_queryset)
+
+            if not order_filter.qs.exists():
+                return Response({'error': 'Not orders found matching the filters'}, 404)
+            orders = order_filter.qs
+        return ExcelService.generate_excel_file(orders)
 
 
 class ApplicationRetrieveUpdateView(RetrieveUpdateAPIView):

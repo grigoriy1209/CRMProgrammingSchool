@@ -3,29 +3,33 @@
 **CRM Programming School that helps manage students, teachers, courses, and financial transactions.**
 
 # Technologies
-
-**Django - web framework for Python used to build the backend.**
-
-**Django Rest Framework - For building RESTful APIs.**
-
-**MySQL - A relational database for storing data about users, cars, and other resources.**
-
-**drf-yasg - For automatically generating API documentation.**
-
+* Django - web framework for Python used to build the backend* 
+* Django Rest Framework - For building RESTful APIs* 
+* MySQL - A relational database for storing data about users, cars, and other resources* 
+* drf-yasg - For automatically generating API documentation.
+* Celery -For background task management.
+* Redis - A message broker for Celery.
+* django-celery-results - To store the results of Celery tasks.
+* django-celery-beat - To manage periodic tasks.
 # Installation
+ Requirements:
+* Python 3.12+    
+* Poetry for dependency management.
+* Docker
+## Docker
+This project supportsDocker for easy setup and development.
+Follow the steps below to run the project in a Docker container.
 
-# Requirements:
+#### Setup Steps:
 
-**Python 3.12+**     
-**Poetry for dependency management.**
-
-## Setup Steps:
-
-### Clone the repository:
+##### Clone the repository:
 
 **git clone** `https://github.com/grigoriy1209/CRMProgrammingSchool.git`
 
 **cd crmprogrammingschool**
+
+#### create and start the containers:
+`docker compose up` or `docker compose up --build`
 
 # Install dependencies:
 
@@ -54,40 +58,53 @@ MYSQL_PORT=
 
 **poetry run manage.py runserver**
 
-Importing Postman Collection
+## Importing Postman Collection
 
 Open Postman.
 
 Click on "Import" in the top-left corner.
 Select the file located at CRMProgramingSCHOOL.postman_collection.json.
 
-API Documentation
+## API Documentation
 
 The API documentation is available through Swagger UI:
 
 API Documentation: http://localhost:8000/api/doc
 
-Dependencies:
+## Main dependencies:
 
-Main dependencies:
+* django
+* djangorestframework
+* mysqlclient
+* django-filter
+* djangorestframework-simplejwt
+* drf-yasg
+* openpyxl
+* celery
+* redis
+* django-celery-results
+* django-celery-beat
 
-django
-djangorestframework
-mysqlclient
+## Development dependencies:
+* isort
 
-Development dependencies:
-isort
+# API Endpoints
 
-API Endpoints
+### Users:
 
-Users
+* all_users: /api/all_users/users
 
-all_users: /api/all_users/users
+* admins: /api/all_users/admins
 
-admins: /api/all_users/admins
+* authentication: /api/all_users/auth
 
-authentication: /api/all_users/auth
+### Applications:
 
-Applications
+* all_application: /api/application
 
-all_application: /api/application
+### Groups:
+
+* groups: /api/groups
+
+### Analytics:
+* analytics: /api/analytics
