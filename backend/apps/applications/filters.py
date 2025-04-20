@@ -19,6 +19,8 @@ class ApplicateFilter(filters.FilterSet):
 
     created_at_range = filters.DateFromToRangeFilter(field_name="created_at")
 
+    my = filters.CharFilter(method='my_orders')
+
     order = filters.OrderingFilter(
         fields=(
             ('id', 'id'),
@@ -56,12 +58,14 @@ class ApplicateFilter(filters.FilterSet):
         fields = [
             'id', 'name', 'surname', 'email', 'phone', 'age',
             'course', 'course_type', 'course_format', 'status',
-            'sum', 'alreadyPaid', 'created_at',
+            'sum', 'alreadyPaid', 'created_at', 'my'
         ]
 
-    def __init__(self, *args, **kwargs):
-        self.request = kwargs.pop('request', None)
-        super().__init__(*args, **kwargs)
+    def __init__(self, data=None, queryset=None, *, request=None, prefix=None):
+        super().__init__(data=data, queryset=queryset, request=request, prefix=prefix)
+        self.user = request.user if request else None
 
-        if self.request and hasattr(self.request, 'user'):
-            self.queryset = self.queryset.filter(manager=self.request.user)
+    def my_orders(self, queryset, name, value):
+        if value == "orders" and self.request.user.is_authenticated:
+            return queryset.filter(manager=self.request.user)
+        return queryset

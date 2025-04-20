@@ -10,6 +10,7 @@ from rest_framework.views import APIView
 from django_filters.rest_framework import DjangoFilterBackend
 
 from apps.all_users_info.users.permissions import IsManager
+from apps.applications.filter_utils import get_filter_orders
 from apps.applications.filters import ApplicateFilter
 from apps.applications.models import CommentModels, OrderModels
 from apps.applications.serializers import ApplicationSerializer, CommentSerializer
@@ -53,21 +54,16 @@ class ExportExcelView(APIView):
     permission_classes = (IsManager,)
 
     def post(self, request, *args, **kwargs):
+        queryset = get_filter_orders(request)
+
         ids = request.data.get('ids', [])
+        if ids:
+            queryset = queryset.filter(id__in=ids)
 
-        filter_data = {key: request.data.get(key) for key in ApplicateFilter.Meta.fields if request.data.get(key)}
-        filter_data['id'] = ids
+        if not queryset.exists():
+            return Response({'error': 'No orders found matching the filters'}, 404)
 
-        if not filter_data:
-            orders = OrderModels.objects.filter(id__in=ids)
-        else:
-            filter_queryset = OrderModels.objects.all()
-            order_filter = ApplicateFilter(data=filter_data, queryset=filter_queryset)
-
-            if not order_filter.qs.exists():
-                return Response({'error': 'Not orders found matching the filters'}, 404)
-            orders = order_filter.qs
-        return ExcelService.generate_excel_file(orders)
+        return ExcelService.generate_excel_file(queryset)
 
 
 class ApplicationRetrieveUpdateView(RetrieveUpdateAPIView):
@@ -97,18 +93,6 @@ class ApplicationRetrieveUpdateView(RetrieveUpdateAPIView):
             serializer = self.get_serializer(order)
             return Response(self.get_serializer(order).data, status=status.HTTP_200_OK)
         return super().patch(request, *args, **kwargs)
-
-
-class OrdersMeView(GenericAPIView):
-    """
-        get:requests of the logged-in user
-    """
-    permission_classes = (IsManager,)
-
-    def get(self, request, *args, **kwargs):
-        orders = OrderModels.objects.filter(manager=request.user)
-        serializer = ApplicationSerializer(orders, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class AddCommentView(GenericAPIView):
