@@ -7,6 +7,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
 from apps.all_users_info.auth.serializers import EmailSerializer, PasswordSerializer
+from apps.all_users_info.users.permissions import IsManager
 from apps.all_users_info.users.serializers import UserSerializer
 
 from core.dataclasses.user_dataclass import User
@@ -61,7 +62,7 @@ class RecoveryPasswordRequestView(GenericAPIView):
     """
         post: Request for password recovery.
     """
-    permission_classes = (AllowAny,)
+    permission_classes = (IsManager,)
     serializer_class = EmailSerializer
 
     def post(self, request, *args, **kwargs):
@@ -79,7 +80,7 @@ class RecoveryPasswordView(GenericAPIView):
     """
         post: Resetting the password.
     """
-    permission_classes = (AllowAny,)
+    permission_classes = (IsManager,)
     serializer_class = PasswordSerializer
 
     def post(self, *args, **kwargs):

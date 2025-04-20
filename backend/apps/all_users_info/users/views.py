@@ -1,8 +1,11 @@
 from django.contrib.auth import get_user_model
-from rest_framework.generics import CreateAPIView, RetrieveAPIView, ListAPIView, RetrieveDestroyAPIView
-from rest_framework.permissions import IsAuthenticated, AllowAny
 
+from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveAPIView, RetrieveDestroyAPIView
+from rest_framework.permissions import AllowAny, IsAuthenticated
+
+from apps.all_users_info.users.permissions import IsManager
 from apps.all_users_info.users.serializers import UserSerializer
+
 from core.dataclasses.user_dataclass import User
 from core.permissions.isSuper_permissions import IsSuperUser
 
@@ -13,7 +16,7 @@ class UsersList(ListAPIView):
     """
     get:List all users,
     """
-    permission_classes = (IsSuperUser,)
+    permission_classes = (IsManager,)
     serializer_class = UserSerializer
     queryset = UserModel.objects.all()
 
@@ -37,7 +40,7 @@ class UserRetrieveView(RetrieveDestroyAPIView):
 
     serializer_class = UserSerializer
     queryset = UserModel.objects.all()
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsSuperUser,)
 
 
 class CurrentUserView(RetrieveAPIView):

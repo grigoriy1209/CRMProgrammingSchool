@@ -3,6 +3,7 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
+from apps.all_users_info.users.permissions import IsManager
 from apps.groups.models import GroupModel
 from apps.groups.serializers import GroupSerializer
 
@@ -10,7 +11,7 @@ from apps.groups.serializers import GroupSerializer
 class GroupListCreateAPIView(GenericAPIView):
     queryset = GroupModel.objects.all()
     serializer_class = GroupSerializer
-    permission_classes = (AllowAny,)
+    permission_classes = (IsManager,)
 
     def get(self, request, *args, **kwargs):
         groups = self.get_queryset()
