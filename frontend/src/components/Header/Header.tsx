@@ -1,16 +1,24 @@
-import React, {useState} from 'react';
-import {Link} from 'react-router-dom';
-import {AppBar, Avatar, Box, Container, IconButton, Menu, MenuItem, Toolbar, Tooltip, Typography} from '@mui/material';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import {
+    AppBar,
+    Avatar,
+    Box,
+    Button,
+    Container,
+    IconButton,
+    Menu,
+    MenuItem,
+    Toolbar,
+    Tooltip,
+    Typography
+} from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import AdbIcon from '@mui/icons-material/Adb';
+import { useAppDispatch } from "../../hooks/reduxHooks";
+import { userAction } from "../../redux/slices/usersSlice";
 
-
-// import { MaterialUISwitch } from "./Styled/ThemeToggle";
-import {useAppDispatch} from "../../hooks/reduxHooks";
-import {userAction} from "../../redux/slices/usersSlice";
-
-
-const pages = ['Users']
+const pages = [''];
 const settings = ['Users', 'Admin', 'Sort', 'Logout'];
 
 const Header = () => {
@@ -18,8 +26,7 @@ const Header = () => {
     const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
 
     const dispatch = useAppDispatch();
-    const [searchQuery, setSearchQuery] = useState('');
-    // const themeMode = useAppSelector(state => state.theme.mode);
+    const navigate = useNavigate();
 
     const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorElNav(event.currentTarget);
@@ -37,25 +44,22 @@ const Header = () => {
         setAnchorElUser(null);
     };
 
-    const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setSearchQuery(event.target.value);
-    };
-
-    const handleSearchSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        dispatch(userAction.loadUsers());
+    const handleLogout = () => {
+        // dispatch(userAction.logout());
+        navigate('/login');
     };
 
     return (
-        <AppBar position="static" sx={{margin:0}}>
-            <Container maxWidth="xl" sx={{padding:0}}>
-                <Toolbar disableGutters sx={{padding:0}}>
+        <AppBar position="static" sx={{ margin: 0 }}>
+            <Container maxWidth="xl" sx={{ padding: 0 }}>
+                <Toolbar disableGutters sx={{ padding: 0 }}>
+
                     <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
                     <Typography
                         variant="h6"
                         noWrap
                         component={Link}
-                        to="/users"
+                        to="/application"
                         sx={{
                             mr: 3,
                             display: { xs: 'none', md: 'flex' },
@@ -66,15 +70,14 @@ const Header = () => {
                             textDecoration: 'none',
                         }}
                     >
-                        admin
+                        CRM
                     </Typography>
+
 
                     <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
                         <IconButton
                             size="large"
-                            aria-label="account of current user"
-                            aria-controls="menu-appbar"
-                            aria-haspopup="true"
+                            aria-label="menu"
                             onClick={handleOpenNavMenu}
                             color="inherit"
                         >
@@ -94,49 +97,36 @@ const Header = () => {
                             }}
                             open={Boolean(anchorElNav)}
                             onClose={handleCloseNavMenu}
-                            sx={{
-                                display: { xs: 'block', md: 'none' },
-                            }}
                         >
                             {pages.map((page) => (
-                                <MenuItem key={page} onClick={handleCloseNavMenu}>
+                                <MenuItem
+                                    key={page}
+                                    component={Link}
+                                    to={`/${page.toLowerCase()}`}
+                                    onClick={handleCloseNavMenu}
+                                >
                                     <Typography textAlign="center">{page}</Typography>
                                 </MenuItem>
                             ))}
                         </Menu>
                     </Box>
 
-                    {/*<Grid container alignItems="center" sx={{ flexGrow: 1 }}>*/}
-                    {/*    {pages.map((page) => (*/}
-                    {/*        <Grid item key={page} sx={{ mr: 2 }}>*/}
-                    {/*            <Button*/}
-                    {/*                component={Link}*/}
-                    {/*                to={`/${page.toLowerCase()}`}*/}
-                    {/*                onClick={handleCloseNavMenu}*/}
-                    {/*                sx={{ color: 'red' }}*/}
-                    {/*            >*/}
-                    {/*                {page}*/}
-                    {/*            </Button>*/}
-                    {/*        </Grid>*/}
-                    {/*    ))}*/}
 
-                    {/*    <Grid item>*/}
-                    {/*        <form onSubmit={handleSearchSubmit}>*/}
-                    {/*            <Search>*/}
-                    {/*                <SearchIconWrapper />*/}
-                    {/*                <StyledInputBase*/}
-                    {/*                    placeholder="Search…"*/}
-                    {/*                    inputProps={{ 'aria-label': 'search' }}*/}
-                    {/*                    value={searchQuery}*/}
-                    {/*                    onChange={handleSearchChange}*/}
-                    {/*                />*/}
-                    {/*            </Search>*/}
-                    {/*        </form>*/}
-                    {/*    </Grid>*/}
-                    {/*</Grid>*/}
-                    {/*<Grid item>*/}
-                    {/*    <MaterialUISwitch checked={themeMode === 'dark'} onChange={() => dispatch(themeActions.toggleTheme())} />*/}
-                    {/*</Grid>*/}
+                    <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+                        {pages.map((page) => (
+                            <Button
+                                key={page}
+                                component={Link}
+                                to={`/${page.toLowerCase()}`}
+                                onClick={handleCloseNavMenu}
+                                sx={{ my: 2, color: 'black', display: 'block' }}
+                            >
+                                {page}
+                            </Button>
+                        ))}
+                    </Box>
+
+
                     <Box sx={{ flexGrow: 0 }}>
                         <Tooltip title="Open settings">
                             <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
@@ -160,9 +150,26 @@ const Header = () => {
                             onClose={handleCloseUserMenu}
                         >
                             {settings.map((setting) => (
-                                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                                    <Typography textAlign="center">{setting}</Typography>
-                                </MenuItem>
+                                setting === 'Logout' ? (
+                                    <MenuItem
+                                        key={setting}
+                                        onClick={() => {
+                                            handleCloseUserMenu();
+                                            handleLogout();
+                                        }}
+                                    >
+                                        <Typography textAlign="center">{setting}</Typography>
+                                    </MenuItem>
+                                ) : (
+                                    <MenuItem
+                                        key={setting}
+                                        component={Link}
+                                        to={`/${setting.toLowerCase()}`}
+                                        onClick={handleCloseUserMenu}
+                                    >
+                                        <Typography textAlign="center">{setting}</Typography>
+                                    </MenuItem>
+                                )
                             ))}
                         </Menu>
                     </Box>
