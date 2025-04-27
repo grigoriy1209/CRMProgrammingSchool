@@ -16,7 +16,7 @@ import {
 import MenuIcon from '@mui/icons-material/Menu';
 import AdbIcon from '@mui/icons-material/Adb';
 import { useAppDispatch } from "../../hooks/reduxHooks";
-import { userAction } from "../../redux/slices/usersSlice";
+
 
 const pages = [''];
 const settings = ['Users', 'Admin', 'Sort', 'Logout'];
