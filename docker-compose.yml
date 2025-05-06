@@ -10,7 +10,11 @@ services:
 #      - "8888:8000"
     restart: on-failure
     command: >
-      sh -c "python manage.py wait_db && python manage.py runserver 0.0.0.0:8000"
+      sh -c " 
+        python manage.py wait_db &&
+        python manage.py collectstatic --no-input &&
+        gunicorn configs.wsgi:application --bind 0.0.0.0:8000"
+    #  python manage.py wait_db && python manage.py runserver 0.0.0.0:8000"
 
   db:
     image: mysql:8

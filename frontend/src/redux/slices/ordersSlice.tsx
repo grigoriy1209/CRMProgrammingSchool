@@ -55,9 +55,24 @@ const getById = createAsyncThunk<IOrder, string, { rejectValue: string }>(
     }
 );
 
+const updateOrder = createAsyncThunk(
+    'orderSlice/updateOrder',
+    async ({orderId, data}: { orderId: string, data: Partial<IOrder> }, {rejectWithValue}) => {
+        try {
+            const updated = await orderServices.update(orderId,data);
+            if(!updated){
+                return rejectWithValue("not update");
+            }return updated
+        }catch (e:any){
+            return rejectWithValue(e.message || "Unknown error");
+        }
+
+    }
+)
+
 const addComment = createAsyncThunk(
     'orderSlice/addComment',
-    async ({orderId, comment, manager, status}: { orderId: number, comment: string, manager: string, status:string },
+    async ({orderId, comment, manager, status}: { orderId: number, comment: string, manager: string, status: string },
            {rejectWithValue}) => {
         try {
             const response = await orderServices.addComments(orderId.toString(), comment, manager, status);
@@ -96,6 +111,9 @@ const ordersSlice = createSlice({
             .addCase(getById.fulfilled, (state, action: PayloadAction<IOrder>) => {
                 state.orderInfo = action.payload;
             })
+            .addCase(updateOrder.fulfilled, (state, action:PayloadAction<IOrder >) => {
+                state.orderInfo = action.payload;
+            })
             .addCase(addComment.fulfilled, (state, action: PayloadAction<IOrder | null>) => {
                 if (action.payload) {
                     state.orderInfo = action.payload;
@@ -108,6 +126,9 @@ const ordersSlice = createSlice({
             .addCase(getById.rejected, (state, action) => {
                 state.error = action.payload as string;
             })
+            .addCase(updateOrder.rejected, (state, action) => {
+                state.error = action.payload as string;
+            })
 });
 
 const {reducer: orderReducer, actions} = ordersSlice;
@@ -117,6 +138,7 @@ const orderActions = {
     getAll,
     getById,
     addComment,
+    updateOrder,
 };
 
 export {orderActions, orderReducer};

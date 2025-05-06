@@ -1,6 +1,8 @@
 import {createBrowserRouter, Navigate, Router} from "react-router-dom";
 import {MainLayout} from "./layouts";
-import {LoginPage, OrderDetailsPage, OrderPage, UsersPages} from "./pages";
+import {AdminsPage, LoginPage, OrderDetailsPage, OrderPage, UsersPages} from "./pages";
+import React from "react";
+
 
 
 const router = createBrowserRouter([
@@ -20,6 +22,9 @@ const router = createBrowserRouter([
             },
             {
                 path:'users', element:<UsersPages/>
+            },
+            {
+                path:'admins',element:<AdminsPage/>
             }
         ]
     }
