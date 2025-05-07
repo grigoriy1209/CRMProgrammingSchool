@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from apps.applications.models import CommentModels, OrderModels
+from apps.groups.models import GroupModel
 
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -17,7 +18,7 @@ class CommentSerializer(serializers.ModelSerializer):
 class ApplicationSerializer(serializers.ModelSerializer):
     comments = CommentSerializer(many=True, read_only=True)
     manager = serializers.SerializerMethodField()
-    group = serializers.PrimaryKeyRelatedField(read_only=True)
+    group = serializers.PrimaryKeyRelatedField(queryset=GroupModel.objects.all(), required=False)
 
     class Meta:
         model = OrderModels
@@ -57,4 +58,9 @@ class ApplicationSerializer(serializers.ModelSerializer):
         if request and hasattr(request, 'user') and request.user.is_active:
             if 'manager' in validated_data and instance.manager is None:
                 instance.manager = request.user
+
+            group = validated_data.get('group')
+            if group:
+                instance.group = group
+
         return super().update(instance, validated_data)

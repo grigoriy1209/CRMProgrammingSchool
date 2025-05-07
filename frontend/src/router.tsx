@@ -21,6 +21,9 @@ const router = createBrowserRouter([
                 path:'application/:id',element:<OrderDetailsPage/>
             },
             {
+
+            },
+            {
                 path:'users', element:<UsersPages/>
             },
             {

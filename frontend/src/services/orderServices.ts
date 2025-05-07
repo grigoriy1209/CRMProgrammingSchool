@@ -18,24 +18,37 @@ const orderServices = {
             const response = await apiServices.get<IOrder>(urls.application.byId(+orderId));
             console.log("Response_ID:", response);
             return response.data;
-        }catch (error){
+        } catch (error) {
             console.error("Error fetching order:", error);
             throw error;
         }
 
     },
-    
-    update: async (orderId: string, data:Partial<IOrder>): Promise<IOrder | null > => {
+
+    update: async (orderId: string, data: Partial<IOrder>): Promise<IOrder | null> => {
         try {
-            const response = await apiServices.patch<IOrder>(urls.application.update(+orderId),data);
+            const response = await apiServices.patch<IOrder>(urls.application.update(+orderId), data);
+            console.log("Response_ID:", response);
             return response.data;
-        }catch (error){
+        } catch (error) {
             console.error("Error updating order:", error);
             return null;
         }
     },
-    
-    
+
+
+    allUpdate: async (orderId: string,data:IOrder): Promise<IOrder | null> => {
+        try {
+            const response = await apiServices.put<IOrder>(urls.application.update(+orderId), data);
+            console.log("Response_ID:", response);
+            return response.data
+        } catch (error) {
+            console.error("Error updating all order:", error);
+            return null
+        }
+    },
+
+
     addComments: async (orderId: string, comment: string, manager: string, status: string): Promise<IOrder | null> => {
         try {
             const response = await apiServices.post<IOrder>(urls.application.addComment(+orderId), {

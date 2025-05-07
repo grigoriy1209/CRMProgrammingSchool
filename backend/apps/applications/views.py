@@ -14,7 +14,6 @@ from apps.applications.filter_utils import get_filter_orders
 from apps.applications.filters import ApplicateFilter
 from apps.applications.models import CommentModels, OrderModels
 from apps.applications.serializers import ApplicationSerializer, CommentSerializer
-from apps.groups.models import GroupModel
 
 from core.pagination import PagePagination
 from core.services.excel_service import ExcelService
@@ -70,7 +69,7 @@ class ApplicationRetrieveUpdateView(RetrieveUpdateAPIView):
     """
         get:Retrieve a single application
         put:Update a single application
-        patch:partial update a single application
+        patch:Partial update a single application
     """
     serializer_class = ApplicationSerializer
     queryset = OrderModels.objects.all()
@@ -84,14 +83,6 @@ class ApplicationRetrieveUpdateView(RetrieveUpdateAPIView):
 
     def patch(self, request, *args, **kwargs):
         order = self.get_object()
-        group_id = request.data.get('group_id')
-
-        if group_id:
-            group = get_object_or_404(GroupModel, pk=group_id)
-            order.group = group
-            order.save(update_fields=['group'])
-            serializer = self.get_serializer(order)
-            return Response(self.get_serializer(order).data, status=status.HTTP_200_OK)
         return super().patch(request, *args, **kwargs)
 
 

@@ -15,6 +15,7 @@ class UserProfile:
 @dataclass()
 class User:
     DoesNotExist = None
+
     def __init__(self):
         self.objects = None
 
