@@ -6,11 +6,13 @@ from apps.all_users_info.users.permissions import IsManager
 from apps.groups.models import GroupModel
 from apps.groups.serializers import GroupSerializer
 
+from core.permissions.isSuper_permissions import IsSuperUser
+
 
 class GroupListCreateAPIView(GenericAPIView):
     queryset = GroupModel.objects.all()
     serializer_class = GroupSerializer
-    permission_classes = (IsManager,)
+    permission_classes = (IsManager,IsSuperUser)
 
     def get(self, request, *args, **kwargs):
         groups = self.get_queryset()
