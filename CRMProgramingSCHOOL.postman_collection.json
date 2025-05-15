@@ -98,7 +98,32 @@
 						},
 						{
 							"name": "refres_token",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const res = pm.response.json()\r",
+											"\r",
+											"pm.environment.set(\"access\",res.access);\r",
+											"pm.environment.set(\"refresh\", res.refresh);"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
 							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{access}}",
+											"type": "string"
+										}
+									]
+								},
 								"method": "POST",
 								"header": [],
 								"body": {
@@ -106,7 +131,7 @@
 									"urlencoded": [
 										{
 											"key": "refresh",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTczNzg0NjUxMSwiaWF0IjoxNzM3ODQ1MzExLCJqdGkiOiIwYTI4M2Y3MjcwMTc0ZjY1YTBmMzcwM2Q0MTVlYWQ3MCIsInVzZXJfaWQiOjJ9.jY0IY5up7GXKwBuYhwpX4kFNihI6JFQ6GgK5pd7PyEU",
+											"value": "{{refresh}}",
 											"type": "text"
 										}
 									]
@@ -120,6 +145,13 @@
 										"all_users",
 										"auth",
 										"refresh"
+									],
+									"query": [
+										{
+											"key": "",
+											"value": null,
+											"disabled": true
+										}
 									]
 								}
 							},
@@ -273,7 +305,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "",
+									"raw": "{\r\n    \"email\":\"\",\r\n    \"profile\":{\r\n        \"name\":\"\",\r\n        \"surname\":\"\"\r\n    }\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -432,7 +464,7 @@
 									"variable": [
 										{
 											"key": "id",
-											"value": "14"
+											"value": ""
 										}
 									]
 								}
@@ -468,7 +500,7 @@
 									"variable": [
 										{
 											"key": "id",
-											"value": "14"
+											"value": ""
 										}
 									]
 								}
@@ -712,7 +744,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "",
+							"raw": "{\r\n    \"name\":\"\" ,\r\n    \"surname\": \"\",\r\n    \"email\": \"\",\r\n    \"phone\":  \"\",\r\n    \"age\": \"\",\r\n    \"course\": \" \",\r\n    \"course_type\": \"\",\r\n    \"course_format\":\"\",\r\n    \"status\": \"\",\r\n    \"sum\": \"\"\r\n\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -731,7 +763,7 @@
 							"variable": [
 								{
 									"key": "id",
-									"value": "505"
+									"value": "1"
 								}
 							]
 						}
@@ -797,6 +829,15 @@
 						},
 						"method": "PATCH",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n        \"name\":\"\" ,\r\n    \"surname\": \"\",\r\n    \"email\": \"\",\r\n    \"phone\":  \"\",\r\n    \"age\": \"\",\r\n    \"course\": \" \",\r\n    \"course_type\": \"\",\r\n    \"course_format\":\"\",\r\n    \"status\": \"\",\r\n    \"sum\": \"\"\r\n\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
 							"raw": "{{host}}/application/:id",
 							"host": [
@@ -818,6 +859,18 @@
 				},
 				{
 					"name": "export-excel",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -848,13 +901,6 @@
 							"path": [
 								"application",
 								"export-excel"
-							],
-							"query": [
-								{
-									"key": "",
-									"value": "",
-									"disabled": true
-								}
 							]
 						}
 					},
@@ -868,8 +914,27 @@
 				{
 					"name": "create_group",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\":\"\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
 							"raw": "{{host}}/groups",
 							"host": [
@@ -885,6 +950,16 @@
 				{
 					"name": "list_group",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
