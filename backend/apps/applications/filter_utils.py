@@ -4,7 +4,7 @@ from apps.applications.models import OrderModels
 
 def get_filter_orders(request):
     bq = OrderModels.objects.all()
-    filter_data = request.data if request.method == 'POST' else request.query_params
+    filter_data = request.data if request.method == 'GET' else request.query_params
 
     order_filter = ApplicateFilter(data=filter_data, queryset=bq)
 
