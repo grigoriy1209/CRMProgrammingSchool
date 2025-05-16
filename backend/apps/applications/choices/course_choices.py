@@ -2,7 +2,7 @@ from django.db import models
 
 
 class Course(models.TextChoices):
-    FX = "FX"
+    FS = "FS"
     QACX = "QACX"
     JCX = "JCX"
     JSCX = "JSCX"

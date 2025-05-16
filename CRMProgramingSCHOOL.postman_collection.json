@@ -675,6 +675,11 @@
 									"key": "my",
 									"value": "orders",
 									"disabled": true
+								},
+								{
+									"key": "order",
+									"value": "",
+									"disabled": true
 								}
 							]
 						}
@@ -901,6 +906,28 @@
 							"path": [
 								"application",
 								"export-excel"
+							],
+							"query": [
+								{
+									"key": "order",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "status",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "course",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "order",
+									"value": "",
+									"disabled": true
+								}
 							]
 						}
 					},

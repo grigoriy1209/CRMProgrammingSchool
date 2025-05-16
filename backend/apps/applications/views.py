@@ -58,7 +58,6 @@ class ExportExcelView(APIView):
         ids = request.data.get('ids', [])
         if ids:
             queryset = queryset.filter(id__in=ids)
-
         if not queryset.exists():
             return Response({'error': 'No orders found matching the filters'}, 404)
 
