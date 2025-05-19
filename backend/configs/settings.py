@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     'django_celery_beat',
     'django_celery_results',
 
-
     # my_apps
     'apps.all_users_info.users',
     'apps.all_users_info.auth',

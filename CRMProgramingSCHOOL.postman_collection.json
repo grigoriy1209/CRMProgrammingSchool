@@ -213,6 +213,41 @@
 							"response": []
 						},
 						{
+							"name": "set-password",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"password\":\"\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/all_users/auth/set-password/:token",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"all_users",
+										"auth",
+										"set-password",
+										":token"
+									],
+									"variable": [
+										{
+											"key": "token",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
 							"name": "recovery_password",
 							"request": {
 								"method": "POST",
@@ -236,41 +271,6 @@
 										"all_users",
 										"auth",
 										"recovery",
-										":token"
-									],
-									"variable": [
-										{
-											"key": "token",
-											"value": ""
-										}
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "set-password",
-							"request": {
-								"method": "PATCH",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"password\":\"\"\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{host}}/all_users/auth/set-password/:token",
-									"host": [
-										"{{host}}"
-									],
-									"path": [
-										"all_users",
-										"auth",
-										"set-password",
 										":token"
 									],
 									"variable": [
@@ -706,7 +706,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\":\"petro\"\r\n}",
+							"raw": "",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -721,6 +721,13 @@
 							"path": [
 								"application",
 								":id"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": "",
+									"disabled": true
+								}
 							],
 							"variable": [
 								{
@@ -924,8 +931,13 @@
 									"disabled": true
 								},
 								{
-									"key": "order",
+									"key": "",
 									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "my",
+									"value": "orders",
 									"disabled": true
 								}
 							]
