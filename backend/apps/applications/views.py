@@ -1,5 +1,7 @@
 from django.db import transaction
+from django.http import JsonResponse
 from django.utils import timezone
+from django.utils.decorators import method_decorator
 
 from rest_framework import status
 from rest_framework.filters import OrderingFilter
@@ -8,6 +10,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from django_filters.rest_framework import DjangoFilterBackend
+from drf_yasg.utils import swagger_auto_schema
 
 from apps.all_users_info.users.permissions import IsManager
 from apps.applications.filter_utils import get_filter_orders
@@ -64,6 +67,7 @@ class ExportExcelView(APIView):
         return ExcelService.generate_excel_file(queryset)
 
 
+@method_decorator(name='get', decorator=swagger_auto_schema(security=[]))
 class ApplicationRetrieveUpdateView(RetrieveUpdateAPIView):
     """
         get:Retrieve a single application
@@ -73,12 +77,6 @@ class ApplicationRetrieveUpdateView(RetrieveUpdateAPIView):
     serializer_class = ApplicationSerializer
     queryset = OrderModels.objects.all()
     permission_classes = (IsManager,)
-
-    def get(self, request, *args, **kwargs):
-        return super().get(request, *args, **kwargs)
-
-    def put(self, request, *args, **kwargs):
-        return super().put(request, *args, **kwargs)
 
     def patch(self, request, *args, **kwargs):
         order = self.get_object()

@@ -14,7 +14,7 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls')
 """
-
+from django.http import JsonResponse
 from django.urls import include, path
 
 from rest_framework.permissions import AllowAny
@@ -32,6 +32,25 @@ schema_view = get_schema_view(
     public=True,
     permission_classes=[AllowAny, ],
 )
+
+
+def custom_page_not_found(request, exception):
+    return JsonResponse({'error': str(exception)}, status=404)
+
+
+def custom_permission_denied(request, exception):
+    return JsonResponse({'error': 'Permission denied'}, status=403)
+
+
+def custom_server_error(request):
+    return JsonResponse({'error': 'Server error'}, status=500)
+
+
+handler404 = custom_page_not_found
+handler403 = custom_permission_denied
+handler500 = custom_server_error
+
+
 urlpatterns = [
     path('api/all_users/users', include('apps.all_users_info.users.urls')),
     path('api/all_users/auth', include('apps.all_users_info.auth.urls')),

@@ -3,6 +3,8 @@ from rest_framework import serializers
 from apps.applications.models import CommentModels, OrderModels
 from apps.groups.models import GroupModel
 
+from core.exeptions.not_found404 import NotFound404
+
 
 class CommentSerializer(serializers.ModelSerializer):
     author = serializers.CharField(source="author.profile.surname", read_only=True)
