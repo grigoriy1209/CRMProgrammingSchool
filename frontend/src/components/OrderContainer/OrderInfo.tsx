@@ -3,6 +3,7 @@ import { Box, Button, Typography } from "@mui/material";
 import { IOrder } from "../../interfaces";
 import { FormComments } from "./FormComments";
 import {UpdateFormOrder} from "./UpdateFormOrder";
+import {useAppSelector} from "../../hooks/reduxHooks";
 
 
 interface IProps {
@@ -10,23 +11,24 @@ interface IProps {
     onClose: () => void;
 }
 
+
 const OrderInfo: FC<IProps> = ({ order,onClose }) => {
     const [showEditForm, setShowEditForm] = useState(false);
-
+    const { groups } = useAppSelector(state => state.groups)
     if (!order) {
         return <Typography>Завантаження...</Typography>;
     }
 
     return (
         <Box sx={{ position: "relative", p: 2 }}>
-            {/* Основна інформація заявки */}
+
             <Typography><strong>msg:</strong> {order.msg || "null"}</Typography>
             <Typography><strong>utm:</strong> {order.utm || "null"}</Typography>
             <Typography><strong>Менеджер:</strong> {order.manager || ""}</Typography>
 
             <FormComments orderId={order.orderId} />
 
-            {/* Центрована кнопка Edit */}
+
             <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
                 <Button
                     variant="contained"
@@ -36,7 +38,7 @@ const OrderInfo: FC<IProps> = ({ order,onClose }) => {
                 </Button>
             </Box>
 
-            {/* "Псевдо-модалка" поверх вмісту */}
+
             {showEditForm && (
                 <Box
                     sx={{
@@ -56,7 +58,11 @@ const OrderInfo: FC<IProps> = ({ order,onClose }) => {
                         border: "3px solid limegreen"
                     }}
                 >
-                    <UpdateFormOrder order={order} onClose={() => setShowEditForm(false)} />
+                    <UpdateFormOrder
+                        order={order}
+                        onClose={() => setShowEditForm(false)}
+                        groups={groups}
+                    />
                     <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
                         <Button
                             onClick={() => setShowEditForm(false)}
