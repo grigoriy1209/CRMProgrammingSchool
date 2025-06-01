@@ -3,8 +3,6 @@ from rest_framework import serializers
 from apps.applications.models import CommentModels, OrderModels
 from apps.groups.models import GroupModel
 
-from core.exeptions.not_found404 import NotFound404
-
 
 class CommentSerializer(serializers.ModelSerializer):
     author = serializers.CharField(source="author.profile.surname", read_only=True)
@@ -20,7 +18,7 @@ class CommentSerializer(serializers.ModelSerializer):
 class ApplicationSerializer(serializers.ModelSerializer):
     comments = CommentSerializer(many=True, read_only=True)
     manager = serializers.SerializerMethodField()
-    group = serializers.PrimaryKeyRelatedField(queryset=GroupModel.objects.all(), required=False)
+    group = serializers.SerializerMethodField()
 
     class Meta:
         model = OrderModels
@@ -50,6 +48,9 @@ class ApplicationSerializer(serializers.ModelSerializer):
     def get_manager(self, obj):
         return obj.manager.profile.surname if obj.manager else None
 
+    def get_group(self, obj):
+        return obj.group.name if obj.group else None
+
     def create(self, validated_data: dict):
         application = OrderModels.objects.create(**validated_data)
         return application
@@ -64,5 +65,6 @@ class ApplicationSerializer(serializers.ModelSerializer):
             group = validated_data.get('group')
             if group:
                 instance.group = group
+            instance.save()
 
         return super().update(instance, validated_data)
