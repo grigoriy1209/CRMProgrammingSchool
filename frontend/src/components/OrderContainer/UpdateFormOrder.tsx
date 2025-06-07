@@ -1,8 +1,19 @@
-import {SubmitHandler, useForm} from "react-hook-form";
-import {IGroup, IOrder} from "../../interfaces";
-import {useAppDispatch} from "../../hooks/reduxHooks";
-import {useEffect} from "react";
-import {orderActions} from "../../redux/slices/ordersSlice";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { IGroup, IOrder } from "../../interfaces";
+import { useAppDispatch } from "../../hooks/reduxHooks";
+import { useEffect } from "react";
+import { orderActions } from "../../redux/slices/ordersSlice";
+
+import {
+    Box,
+    Button,
+    FormControl,
+    InputLabel,
+    MenuItem,
+    Select,
+    TextField,
+    Typography
+} from "@mui/material";
 
 interface IProps {
     order: IOrder;
@@ -15,8 +26,8 @@ const courses = ['FS', 'QACX', 'JCX', 'JSCX', 'FE', 'PCX'];
 const courseType = ['pro', 'minimal', 'premium', 'incubator', 'vip'];
 const courseFormat = ["static", 'online'];
 
-const UpdateFormOrder = ({order, onClose, groups}: IProps) => {
-    const {register, handleSubmit, setValue} = useForm<IOrder>();
+const UpdateFormOrder = ({ order, onClose, groups }: IProps) => {
+    const { register, handleSubmit, setValue } = useForm<IOrder>();
     const dispatch = useAppDispatch();
 
     useEffect(() => {
@@ -38,11 +49,12 @@ const UpdateFormOrder = ({order, onClose, groups}: IProps) => {
         }
     }, [order, setValue]);
 
+
+
+
     const onSubmit: SubmitHandler<IOrder> = async (data) => {
         try {
-            console.log("Sending data:", data);
-            await dispatch(orderActions.updateOrder({orderId: order.id.toString(), data}));
-            console.log("Order updated successfully");
+            await dispatch(orderActions.updateOrder({ orderId: order.id.toString(), data }));
             onClose?.();
         } catch (error) {
             console.error("Update failed:", error);
@@ -50,46 +62,86 @@ const UpdateFormOrder = ({order, onClose, groups}: IProps) => {
     };
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)} style={{display: 'flex', flexDirection: 'column', gap: '10px'}}>
-            <input type="text" placeholder="name" {...register("name")} />
-            <input type="text" placeholder="surname" {...register("surname")} />
-            <input type="text" placeholder="Email"{...register("email")}/>
-            <input type="number" placeholder="age" min="1" {...register("age")} />
-            <input type="number" placeholder="Phone" min="1" {...register("phone")} />
-            <input type="number" placeholder="sum" min="1" {...register("sum")} />
-            <input type="number" placeholder="alreadyPaid" {...register("alreadyPaid")} />
+        <Box
+            component="form"
+            onSubmit={handleSubmit(onSubmit)}
+            sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 2,
+                maxWidth: 500,
+                margin: '0 auto',
+                p: 3,
+                bgcolor: 'background.paper',
+                borderRadius: 2,
+                boxShadow: 3
+            }}
+        >
+            {/*<Typography variant="h6" component="h2">Редагування заявки</Typography>*/}
 
+            <TextField label="Ім'я" {...register("name", { required: true })} />
+            <TextField label="Прізвище" {...register("surname", { required: true })} />
+            <TextField label="Email" type="email" {...register("email", { required: true })} />
+            <TextField label="Вік" type="number" {...register("age", { required: true, min: 1 })} />
+            <TextField label="Телефон" type="number" {...register("phone", { required: true })} />
+            <TextField label="Сума" type="number" {...register("sum", { required: true })} />
+            <TextField label="Оплачено" type="number" {...register("alreadyPaid")} />
 
-            <select {...register("status")}>
-                {statuses.map(status => <option key={status} value={status}>{status}</option>)}
-            </select>
+            <FormControl fullWidth>
+                <InputLabel>Status</InputLabel>
+                <Select {...register("status")} defaultValue={order.status}>
+                    {statuses.map(status => (
+                        <MenuItem key={status} value={status}>{status}</MenuItem>
+                    ))}
+                </Select>
+            </FormControl>
 
-            <select {...register("course")}>
-                {courses.map(course => <option key={course} value={course}>{course}</option>)}
-            </select>
+            <FormControl fullWidth>
+                <InputLabel>Course</InputLabel>
+                <Select {...register("course")} defaultValue={order.course}>
+                    {courses.map(course => (
+                        <MenuItem key={course} value={course}>{course}</MenuItem>
+                    ))}
+                </Select>
+            </FormControl>
 
-            <select {...register("courseFormat")}>
-                {courseFormat.map(format => <option key={format} value={format}>{format}</option>)}
-            </select>
+            <FormControl fullWidth>
+                <InputLabel>Course Type</InputLabel>
+                <Select {...register("courseType")} defaultValue={order.courseType}>
+                    {courseType.map(type => (
+                        <MenuItem key={type} value={type}>{type}</MenuItem>
+                    ))}
+                </Select>
+            </FormControl>
 
-            <select {...register("courseType")}>
-                {courseType.map(type => <option key={type} value={type}>{type}</option>)}
-            </select>
+            <FormControl fullWidth>
+                <InputLabel>Course Format</InputLabel>
+                <Select {...register("courseFormat")} defaultValue={order.courseFormat}>
+                    {courseFormat.map(format => (
+                        <MenuItem key={format} value={format}>{format}</MenuItem>
+                    ))}
+                </Select>
+            </FormControl>
 
+            <FormControl fullWidth>
+                <InputLabel>Group</InputLabel>
+                <Select {...register("group_id")} defaultValue={order.group_id || ""}>
+                    <MenuItem value="">-- Виберіть групу --</MenuItem>
+                    {groups.map(group => (
+                        <MenuItem key={group.id} value={group.id}>{group.name}</MenuItem>
+                    ))}
+                </Select>
+            </FormControl>
 
-            <select {...register("group_id")}>
-                <option value="">-- Виберіть групу --</option>
-                {groups.map(group => (
-                    <option key={group.id} value={group.id}>{group.name}</option>
-                ))}
-            </select>
-
-            <button type="submit">Оновити</button>
-            {onClose && (
-                <button type="button" onClick={onClose}>Закрити</button>
-            )}
-        </form>
+            <Box display="flex" gap={2}>
+                <Button type="submit" variant="contained" color="primary">Оновити</Button>
+                {onClose && (
+                    <Button variant="outlined" onClick={onClose}>Close</Button>
+                )}
+            </Box>
+        </Box>
     );
 };
 
-export {UpdateFormOrder};
+export { UpdateFormOrder };
+
