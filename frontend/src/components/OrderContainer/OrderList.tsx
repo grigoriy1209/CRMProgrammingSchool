@@ -6,8 +6,11 @@ import {orderActions} from "../../redux/slices/ordersSlice";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 import {
-    Accordion, AccordionDetails,
-    AccordionSummary, Box, Paper,
+    Accordion,
+    AccordionDetails,
+    AccordionSummary,
+    Box,
+    Paper,
     Table,
     TableBody,
     TableCell,
@@ -41,7 +44,7 @@ const OrdersList: FC = () => {
     useEffect(() => {
         const pageUrl = getPageFromUrl(location.search);
         dispatch(orderActions.getAll(pageUrl));
-    }, [dispatch, location.search]);
+    }, [dispatch, location.search,]);
 
     if (error) return <Typography variant="h6" color="error">Error: {error}</Typography>;
 
@@ -108,7 +111,7 @@ const OrdersList: FC = () => {
                                                     >
                                                     </AccordionSummary>
                                                     <AccordionDetails>
-                                                        <OrderInfo order={order} onClose={() => setExpandedOrderId(null)} />
+                                                        <OrderInfo order={order} onClose={() => setExpandedOrderId(null)}/>
                                                     </AccordionDetails>
                                                 </Accordion>
                                             </TableCell>

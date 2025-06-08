@@ -14,7 +14,7 @@ const courseType = ['pro', 'minimal', 'premium', 'incubator', 'vip'];
 const courseFormat = ["static", 'online'];
 
 interface IProps {
-    order: IOrder;
+    order: IOrder | null;
     onClose?: () => void;
     groups: IGroup[];
 }
@@ -45,8 +45,10 @@ const UpdateFormOrder = ({order, onClose}: IProps) => {
     }, [order, setValue]);
 
     const onSubmit: SubmitHandler<IOrder> = async (data) => {
+        console.log("Submitting data:", data);
         try {
-            await dispatch(orderActions.updateOrder({orderId: order.id.toString(), data}));
+            await dispatch(orderActions.updateOrder({orderId: order!.id.toString(), data}));
+            await dispatch(orderActions.getById(order!.id.toString()))
             onClose?.();
         } catch (error) {
             console.error("Update failed:", error);
@@ -83,7 +85,7 @@ const UpdateFormOrder = ({order, onClose}: IProps) => {
                 <Grid item xs={12} sm={6}>
                     <FormControl fullWidth>
                         <InputLabel>Status</InputLabel>
-                        <Select defaultValue={order.status} {...register("status")}>
+                        <Select{...register("status")}>
                             {statuses.map(status => <MenuItem key={status} value={status}>{status}</MenuItem>)}
                         </Select>
                     </FormControl>
@@ -93,7 +95,7 @@ const UpdateFormOrder = ({order, onClose}: IProps) => {
                 <Grid item xs={12} sm={6}>
                     <FormControl fullWidth>
                         <InputLabel>Course</InputLabel>
-                        <Select defaultValue={order.course} {...register("course")}>
+                        <Select{...register("course")}>
                             {courses.map(course => <MenuItem key={course} value={course}>{course}</MenuItem>)}
                         </Select>
                     </FormControl>
@@ -102,7 +104,7 @@ const UpdateFormOrder = ({order, onClose}: IProps) => {
                 <Grid item xs={12} sm={6}>
                     <FormControl fullWidth>
                         <InputLabel>Course Type</InputLabel>
-                        <Select defaultValue={order.courseType} {...register("courseType")}>
+                        <Select {...register("courseType")}>
                             {courseType.map(type => <MenuItem key={type} value={type}>{type}</MenuItem>)}
                         </Select>
                     </FormControl>
@@ -111,7 +113,7 @@ const UpdateFormOrder = ({order, onClose}: IProps) => {
                 <Grid item xs={12} sm={6}>
                     <FormControl fullWidth>
                         <InputLabel>Course Format</InputLabel>
-                        <Select defaultValue={order.courseFormat} {...register("courseFormat")}>
+                        <Select{...register("courseFormat")}>
                             {courseFormat.map(format => <MenuItem key={format} value={format}>{format}</MenuItem>)}
                         </Select>
                     </FormControl>
@@ -119,7 +121,7 @@ const UpdateFormOrder = ({order, onClose}: IProps) => {
                 <Grid item xs={12} sm={6}>
                     <Group
                         value={group_id || ""}
-                        onChange={(value) => setValue("group_id", value)}
+                        onChange={(value) => setValue("group_id",Number( value))}
                     />
                 </Grid>
 

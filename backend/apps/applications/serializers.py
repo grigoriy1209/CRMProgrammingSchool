@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from apps.applications.models import CommentModels, OrderModels
+from apps.groups.models import GroupModel
 
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -17,7 +18,13 @@ class CommentSerializer(serializers.ModelSerializer):
 class ApplicationSerializer(serializers.ModelSerializer):
     comments = CommentSerializer(many=True, read_only=True)
     manager = serializers.SerializerMethodField()
-    group = serializers.SerializerMethodField()
+    group = serializers.SerializerMethodField(read_only=True)
+    group_id = serializers.PrimaryKeyRelatedField(
+        queryset=GroupModel.objects.all(),
+        source="group",
+        write_only=True,
+        required=False,
+    )
 
     class Meta:
         model = OrderModels
@@ -38,7 +45,9 @@ class ApplicationSerializer(serializers.ModelSerializer):
             'created_at',
             'manager',
             'group',
-            'msg', 'utm', 'comments'
+            'group_id',
+            'utm',
+            'comments'
 
         )
         read_only_fields = ('id', 'created_at',)
@@ -61,7 +70,7 @@ class ApplicationSerializer(serializers.ModelSerializer):
             if instance.manager is None:
                 instance.manager = request.user
 
-            group = validated_data.get('group')
+            group = validated_data.get('group_id')
             if group:
                 instance.group = group
             instance.save()

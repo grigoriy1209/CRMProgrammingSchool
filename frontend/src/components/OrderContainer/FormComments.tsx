@@ -1,7 +1,7 @@
-import React, { FormEvent, useEffect, useState } from 'react';
-import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks';
-import { orderActions } from '../../redux/slices/ordersSlice';
+import React, {FormEvent, useEffect, useState} from 'react';
+import {useAppDispatch, useAppSelector} from '../../hooks/reduxHooks';
 import dayjs from 'dayjs';
+import {commentActions} from "../../redux/slices/commentsSlise";
 
 const FormComments = ({ orderId }: { orderId: number }) => {
     const dispatch = useAppDispatch();
@@ -15,6 +15,7 @@ const FormComments = ({ orderId }: { orderId: number }) => {
 
     useEffect(() => {
         setIsCommentAllowed(!order?.manager && (order?.sq === 'New' || !order?.status));
+        console.log('Order with comments:', order);
     }, [order]);
 
     const handleSubmit = (e: FormEvent) => {
@@ -24,7 +25,7 @@ const FormComments = ({ orderId }: { orderId: number }) => {
             const newStatus = order?.status === 'New' || !order?.status ? 'In_Work' : order.status;
 
 
-            dispatch(orderActions.addComment({ orderId, comment, manager, status: newStatus }));
+            dispatch(commentActions.addComment({ orderId, comment, manager, status: newStatus }));
             setComment('');
         }
     };
@@ -34,12 +35,14 @@ const FormComments = ({ orderId }: { orderId: number }) => {
             <div className="mb-4">
                 {comments.length > 0 && (
                     <ul>
-                        {comments.map((comment, index) => (
-                            <li key={index} className="border-b py-2">
-                                <p>{`${comment?.manager}`}:{dayjs(comment?.created_at).format('MMMM DD, YYYY')}</p>
-                                <p>{comment?.text}</p>
-                            </li>
-                        ))}
+                        {
+                            comments.map(({manager,created_at,text}, index) => (
+                                <li key={index} className="border-b py-2">
+                                    <p>{`${manager}: ${dayjs(created_at).format('MMMM DD, YYYY')}`}</p>
+                                    <p>{text}</p>
+                                </li>
+                            ))
+                        }
                     </ul>
                 )}
             </div>
@@ -52,7 +55,10 @@ const FormComments = ({ orderId }: { orderId: number }) => {
                         className="border p-2 rounded-md"
                         rows={3}
                     />
-                    <button type="submit" className="bg-blue-500 text-white p-2 rounded-md">
+                    <button type="submit"
+                            disabled={!comment.trim()}
+                            className="bg-blue-500 text-white p-2 rounded-md"
+                    >
                         SUBMIT
                     </button>
                 </form>

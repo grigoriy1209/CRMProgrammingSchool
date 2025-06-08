@@ -1,4 +1,5 @@
 import {IUser} from "./userInterfaces";
+import {IGroup} from "./groupInterface";
 
 export interface IOrder {
     id: number,
@@ -15,7 +16,7 @@ export interface IOrder {
     alreadyPaid: string,
     created_at:string,
     manager: number,
-    group: number,
+    group_id?: number | null,
     msg: string,
     utm: string,
     [key: string]: any;

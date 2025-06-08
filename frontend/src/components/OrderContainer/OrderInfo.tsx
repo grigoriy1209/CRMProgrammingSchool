@@ -1,30 +1,32 @@
-import React, { FC, useState } from "react";
-import { Box, Button, Typography } from "@mui/material";
-import { IOrder } from "../../interfaces";
-import { FormComments } from "./FormComments";
+import React, {FC, useEffect, useState} from "react";
+import {Box, Button, Typography} from "@mui/material";
+import {FormComments} from "./FormComments";
 import {UpdateFormOrder} from "./UpdateFormOrder";
-import {useAppSelector} from "../../hooks/reduxHooks";
+import {useAppDispatch, useAppSelector} from "../../hooks/reduxHooks";
+import {orderActions} from "../../redux/slices/ordersSlice";
+import {IOrder} from "../../interfaces";
 
 
 interface IProps {
-    order: IOrder | null;
+    order: IOrder ;
     onClose: () => void;
 }
 
 
 const OrderInfo: FC<IProps> = ({ order,onClose }) => {
     const [showEditForm, setShowEditForm] = useState(false);
+    const dispatch = useAppDispatch();
+
     const { groups } = useAppSelector(state => state.groups)
-    if (!order) {
-        return <Typography>Завантаження...</Typography>;
-    }
+
+
 
     return (
         <Box sx={{ position: "relative", p: 2 }}>
 
             <Typography><strong>msg:</strong> {order.msg || "null"}</Typography>
             <Typography><strong>utm:</strong> {order.utm || "null"}</Typography>
-            <Typography><strong>Менеджер:</strong> {order.manager || ""}</Typography>
+            <Typography><strong>Manager:</strong> {order.manager || ""}</Typography>
 
             <FormComments orderId={order.orderId} />
 
