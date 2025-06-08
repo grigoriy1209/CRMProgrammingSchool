@@ -1,19 +1,17 @@
-import { SubmitHandler, useForm } from "react-hook-form";
-import { IGroup, IOrder } from "../../interfaces";
-import { useAppDispatch } from "../../hooks/reduxHooks";
-import { useEffect } from "react";
-import { orderActions } from "../../redux/slices/ordersSlice";
+import React, {useEffect} from "react";
+import {SubmitHandler, useForm} from "react-hook-form";
+import {Box, Button, FormControl,Grid, InputLabel, MenuItem, Select, TextField} from "@mui/material";
+import {useAppDispatch} from "../../hooks/reduxHooks";
+import {orderActions} from "../../redux/slices/ordersSlice";
+import {IGroup, IOrder} from "../../interfaces";
+import {Group} from "./GroupContainer/GroupForm";
 
-import {
-    Box,
-    Button,
-    FormControl,
-    InputLabel,
-    MenuItem,
-    Select,
-    TextField,
-    Typography
-} from "@mui/material";
+
+
+const statuses = ["InWork", "New", "Agree", "Disagree", "Dubbing"];
+const courses = ['FS', 'QACX', 'JCX', 'JSCX', 'FE', 'PCX'];
+const courseType = ['pro', 'minimal', 'premium', 'incubator', 'vip'];
+const courseFormat = ["static", 'online'];
 
 interface IProps {
     order: IOrder;
@@ -21,14 +19,11 @@ interface IProps {
     groups: IGroup[];
 }
 
-const statuses = ["InWork", "New", "Agree", "Disagree", "Dubbing"];
-const courses = ['FS', 'QACX', 'JCX', 'JSCX', 'FE', 'PCX'];
-const courseType = ['pro', 'minimal', 'premium', 'incubator', 'vip'];
-const courseFormat = ["static", 'online'];
-
-const UpdateFormOrder = ({ order, onClose, groups }: IProps) => {
-    const { register, handleSubmit, setValue } = useForm<IOrder>();
+const UpdateFormOrder = ({order, onClose}: IProps) => {
+    const {register, handleSubmit, setValue, watch} = useForm<IOrder>();
     const dispatch = useAppDispatch();
+
+    const group_id = watch("group_id");
 
     useEffect(() => {
         if (order) {
@@ -49,12 +44,9 @@ const UpdateFormOrder = ({ order, onClose, groups }: IProps) => {
         }
     }, [order, setValue]);
 
-
-
-
     const onSubmit: SubmitHandler<IOrder> = async (data) => {
         try {
-            await dispatch(orderActions.updateOrder({ orderId: order.id.toString(), data }));
+            await dispatch(orderActions.updateOrder({orderId: order.id.toString(), data}));
             onClose?.();
         } catch (error) {
             console.error("Update failed:", error);
@@ -66,82 +58,84 @@ const UpdateFormOrder = ({ order, onClose, groups }: IProps) => {
             component="form"
             onSubmit={handleSubmit(onSubmit)}
             sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: 2,
-                maxWidth: 500,
-                margin: '0 auto',
+                maxWidth: 1000,
+                mx: "auto",
                 p: 3,
-                bgcolor: 'background.paper',
+                bgcolor: 'white',
                 borderRadius: 2,
                 boxShadow: 3
-            }}
+        }}
         >
-            {/*<Typography variant="h6" component="h2">Редагування заявки</Typography>*/}
 
-            <TextField label="Ім'я" {...register("name", { required: true })} />
-            <TextField label="Прізвище" {...register("surname", { required: true })} />
-            <TextField label="Email" type="email" {...register("email", { required: true })} />
-            <TextField label="Вік" type="number" {...register("age", { required: true, min: 1 })} />
-            <TextField label="Телефон" type="number" {...register("phone", { required: true })} />
-            <TextField label="Сума" type="number" {...register("sum", { required: true })} />
-            <TextField label="Оплачено" type="number" {...register("alreadyPaid")} />
+            <Grid container spacing={2}>
+                <Grid item xs={12} sm={6}><TextField label="Name" fullWidth {...register("name")} /></Grid>
+                <Grid item xs={12} sm={6}><TextField label="Surname" fullWidth {...register("surname")} /></Grid>
+                <Grid item xs={12} sm={6}><TextField label="Email" fullWidth
+                                                     type="email" {...register("email")} /></Grid>
+                <Grid item xs={12} sm={6}><TextField label="Age" fullWidth
+                                                     type="number" {...register("age", {min: 1})} /></Grid>
+                <Grid item xs={12} sm={6}><TextField label="Phone" fullWidth
+                                                     type="number" {...register("phone")} /></Grid>
+                <Grid item xs={12} sm={6}><TextField label="Suma" fullWidth type="number" {...register("sum")} /></Grid>
+                <Grid item xs={12} sm={6}><TextField label="already paid" fullWidth
+                                                     type="number" {...register("alreadyPaid")} /></Grid>
 
-            <FormControl fullWidth>
-                <InputLabel>Status</InputLabel>
-                <Select {...register("status")} defaultValue={order.status}>
-                    {statuses.map(status => (
-                        <MenuItem key={status} value={status}>{status}</MenuItem>
-                    ))}
-                </Select>
-            </FormControl>
+                <Grid item xs={12} sm={6}>
+                    <FormControl fullWidth>
+                        <InputLabel>Status</InputLabel>
+                        <Select defaultValue={order.status} {...register("status")}>
+                            {statuses.map(status => <MenuItem key={status} value={status}>{status}</MenuItem>)}
+                        </Select>
+                    </FormControl>
 
-            <FormControl fullWidth>
-                <InputLabel>Course</InputLabel>
-                <Select {...register("course")} defaultValue={order.course}>
-                    {courses.map(course => (
-                        <MenuItem key={course} value={course}>{course}</MenuItem>
-                    ))}
-                </Select>
-            </FormControl>
+                </Grid>
 
-            <FormControl fullWidth>
-                <InputLabel>Course Type</InputLabel>
-                <Select {...register("courseType")} defaultValue={order.courseType}>
-                    {courseType.map(type => (
-                        <MenuItem key={type} value={type}>{type}</MenuItem>
-                    ))}
-                </Select>
-            </FormControl>
+                <Grid item xs={12} sm={6}>
+                    <FormControl fullWidth>
+                        <InputLabel>Course</InputLabel>
+                        <Select defaultValue={order.course} {...register("course")}>
+                            {courses.map(course => <MenuItem key={course} value={course}>{course}</MenuItem>)}
+                        </Select>
+                    </FormControl>
+                </Grid>
 
-            <FormControl fullWidth>
-                <InputLabel>Course Format</InputLabel>
-                <Select {...register("courseFormat")} defaultValue={order.courseFormat}>
-                    {courseFormat.map(format => (
-                        <MenuItem key={format} value={format}>{format}</MenuItem>
-                    ))}
-                </Select>
-            </FormControl>
+                <Grid item xs={12} sm={6}>
+                    <FormControl fullWidth>
+                        <InputLabel>Course Type</InputLabel>
+                        <Select defaultValue={order.courseType} {...register("courseType")}>
+                            {courseType.map(type => <MenuItem key={type} value={type}>{type}</MenuItem>)}
+                        </Select>
+                    </FormControl>
+                </Grid>
 
-            <FormControl fullWidth>
-                <InputLabel>Group</InputLabel>
-                <Select {...register("group_id")} defaultValue={order.group_id || ""}>
-                    <MenuItem value="">-- Виберіть групу --</MenuItem>
-                    {groups.map(group => (
-                        <MenuItem key={group.id} value={group.id}>{group.name}</MenuItem>
-                    ))}
-                </Select>
-            </FormControl>
+                <Grid item xs={12} sm={6}>
+                    <FormControl fullWidth>
+                        <InputLabel>Course Format</InputLabel>
+                        <Select defaultValue={order.courseFormat} {...register("courseFormat")}>
+                            {courseFormat.map(format => <MenuItem key={format} value={format}>{format}</MenuItem>)}
+                        </Select>
+                    </FormControl>
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                    <Group
+                        value={group_id || ""}
+                        onChange={(value) => setValue("group_id", value)}
+                    />
+                </Grid>
 
-            <Box display="flex" gap={2}>
-                <Button type="submit" variant="contained" color="primary">Оновити</Button>
-                {onClose && (
-                    <Button variant="outlined" onClick={onClose}>Close</Button>
-                )}
-            </Box>
+                <Grid item xs={12}>
+                    <Grid container spacing={2} justifyContent="flex-end">
+                        <Grid item><Button type="submit" variant="contained">Update</Button></Grid>
+                        {onClose && <Grid item><Button variant="outlined" onClick={onClose}>Close</Button></Grid>}
+                    </Grid>
+                </Grid>
+            </Grid>
         </Box>
     );
 };
 
-export { UpdateFormOrder };
+export {UpdateFormOrder};
+
+
+
 

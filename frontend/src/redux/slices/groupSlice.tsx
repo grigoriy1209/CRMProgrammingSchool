@@ -1,4 +1,4 @@
-import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
+import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {IGroup} from "../../interfaces";
 import {groupServices} from "../../services/groupServices";
 
@@ -47,7 +47,7 @@ const groupSlice = createSlice({
                 state.loading = false
                 state.error = action.error.message || 'Error'
             })
-            .addCase(createGroup.fulfilled, (state, action) => {
+            .addCase(createGroup.fulfilled, (state, action:PayloadAction<IGroup>) => {
                 state.groups.push(action.payload)
             })
     }

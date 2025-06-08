@@ -6,20 +6,16 @@ const orderServices = {
     getAll: async (page: string = "1"): Promise<IOrderPagination<IOrder> | null> => {
         try {
             const response = await apiServices.get<IOrderPagination<IOrder>>(urls.application.base, {params: {page: Number(page)}});
-            console.log("Response:", response);
             return response.data;
         } catch (error) {
-            console.error("Error fetching orders:", error);
             return null;
         }
     },
     byId: async (orderId: string): Promise<IOrder> => {
         try {
             const response = await apiServices.get<IOrder>(urls.application.byId(+orderId));
-            console.log("Response_ID:", response);
             return response.data;
         } catch (error) {
-            console.error("Error fetching order:", error);
             throw error;
         }
 
@@ -28,22 +24,18 @@ const orderServices = {
     update: async (orderId: string, data: Partial<IOrder>): Promise<IOrder | null> => {
         try {
             const response = await apiServices.patch<IOrder>(urls.application.update(+orderId), data);
-            console.log("Response_ID:", response);
             return response.data;
         } catch (error) {
-            console.error("Error updating order:", error);
             return null;
         }
     },
 
 
-    allUpdate: async (orderId: string,data:IOrder): Promise<IOrder | null> => {
+    allUpdateOrder: async (orderId: string,data:IOrder): Promise<IOrder | null> => {
         try {
             const response = await apiServices.put<IOrder>(urls.application.update(+orderId), data);
-            console.log("Response_ID:", response);
             return response.data
         } catch (error) {
-            console.error("Error updating all order:", error);
             return null
         }
     },
@@ -56,11 +48,9 @@ const orderServices = {
                 manager,
                 status
             });
-            console.log(response.data);
             return response.data;
 
         } catch (error) {
-            console.error("Error adding comments:", error);
             return null;
         }
     }

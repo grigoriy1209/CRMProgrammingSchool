@@ -39,9 +39,6 @@ const getAll = createAsyncThunk<IOrderPagination<IOrder>, number, { rejectValue:
 const getById = createAsyncThunk<IOrder, string, { rejectValue: string }>(
     'orderSlice/byId',
     async (id, {rejectWithValue}) => {
-        if (!id) {
-            return rejectWithValue("ID is required");
-        }
         try {
             const order = await orderServices.byId(id);
             if (!order) {
@@ -70,11 +67,11 @@ const updateOrder = createAsyncThunk(
 
     }
 )
-const allUpdateOrders = createAsyncThunk(
+const allUpdateOrder = createAsyncThunk(
     'orderSlice/allUpdateOrders',
     async ({orderId, data}: { orderId: string, data: IOrder }, {rejectWithValue}) => {
         try {
-            const allUpdate = await orderServices.allUpdate(orderId, data);
+            const allUpdate = await orderServices.allUpdateOrder(orderId, data);
             if (!allUpdate) {
                 return rejectWithValue("No data received");
             }
@@ -101,8 +98,12 @@ const addComment = createAsyncThunk(
 const setOrderInfo = (state: IState, action: PayloadAction<IOrder>) => {
     state.orderInfo = action.payload;
 };
+const handleRejected = (state: IState, action: any) => {
+    state.error = action.payload || "Unknown error";
+};
 
-const ordersSlice = createSlice({
+
+const orderSlice = createSlice({
     name: "ordersSlice",
     initialState: orderInitialState,
     reducers: {
@@ -129,7 +130,7 @@ const ordersSlice = createSlice({
             .addCase(updateOrder.fulfilled, (state, action: PayloadAction<IOrder>) => {
                 state.orderInfo = action.payload;
             })
-            .addCase(allUpdateOrders.fulfilled,(state, action: PayloadAction<IOrder>) => {
+            .addCase(allUpdateOrder.fulfilled,(state, action: PayloadAction<IOrder>) => {
                 state.orderInfo = action.payload;
             })
             .addCase(addComment.fulfilled, (state, action: PayloadAction<IOrder | null>) => {
@@ -138,22 +139,18 @@ const ordersSlice = createSlice({
                     state.error = null;
                 }
             })
-            .addCase(getAll.rejected, (state, action) => {
-                state.error = action.payload as string;
-            })
-            .addCase(getById.rejected, (state, action) => {
-                state.error = action.payload as string;
-            })
+            .addCase(getAll.rejected, handleRejected)
+            .addCase(getById.rejected, handleRejected)
             .addCase(updateOrder.rejected, (state, action) => {
                 state.error = action.payload as string;
             })
-            .addCase(allUpdateOrders.rejected, (state, action) => {
+            .addCase(allUpdateOrder.rejected, (state, action) => {
                 state.error = action.payload as string;
             })
 
 });
 
-const {reducer: orderReducer, actions} = ordersSlice;
+const {reducer: orderReducer, actions} = orderSlice;
 
 const orderActions = {
     ...actions,
@@ -161,7 +158,7 @@ const orderActions = {
     getById,
     addComment,
     updateOrder,
-    allUpdateOrders,
+    allUpdateOrder,
 };
 
 export {orderActions, orderReducer};

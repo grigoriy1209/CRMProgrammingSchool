@@ -64,14 +64,7 @@ const OrderInfo: FC<IProps> = ({ order,onClose }) => {
                         groups={groups}
                     />
                     <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
-                        <Button
-                            onClick={() => setShowEditForm(false)}
-                            variant="outlined"
-                            color="secondary"
-                            sx={{ mr: 2 }}
-                        >
-                            Close
-                        </Button>
+
                     </Box>
                 </Box>
             )}

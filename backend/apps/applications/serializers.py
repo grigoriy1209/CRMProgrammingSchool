@@ -1,7 +1,6 @@
 from rest_framework import serializers
 
 from apps.applications.models import CommentModels, OrderModels
-from apps.groups.models import GroupModel
 
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -51,15 +50,15 @@ class ApplicationSerializer(serializers.ModelSerializer):
     def get_group(self, obj):
         return obj.group.name if obj.group else None
 
-    def create(self, validated_data: dict):
-        application = OrderModels.objects.create(**validated_data)
-        return application
+    # def create(self, validated_data: dict):
+    #     application = OrderModels.objects.create(**validated_data)
+    #     return application
 
     def update(self, instance, validated_data: dict):
         request = self.context.get('request')
 
         if request and hasattr(request, 'user') and request.user.is_active:
-            if 'manager' in validated_data and instance.manager is None:
+            if instance.manager is None:
                 instance.manager = request.user
 
             group = validated_data.get('group')

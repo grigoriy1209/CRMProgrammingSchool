@@ -1,50 +1,65 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState} from "react";
 import {useAppDispatch, useAppSelector} from "../../../hooks/reduxHooks";
 import {groupActions} from "../../../redux/slices/groupSlice";
+import {Box, Button, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, TextField} from "@mui/material";
 
-const {getAllGroup, createGroup,} = groupActions;
+interface Props {
+    value: string | number | null;
+    onChange: (value: string | number) => void;
+}
 
-const GroupList = () => {
+const Group = ({ value, onChange }: Props) => {
     const dispatch = useAppDispatch();
-    const {groups, loading, error} = useAppSelector((state) => state.groups);
-    const [name, setName] = useState('');
+    const { groups } = useAppSelector((state) => state.groups);
+    const [newGroup, setNewGroup] = useState("");
 
     useEffect(() => {
-        dispatch(getAllGroup());
+        dispatch(groupActions.getAllGroup());
     }, [dispatch]);
 
-    const handleSubmit = () => {
-        if (name.trim()) {
-            dispatch(createGroup({name}));
-            setName('');
-        }
+    const handleSelectChange = (event: SelectChangeEvent) => {
+        onChange(event.target.value);
+    };
+
+    const handleCreateGroup = async () => {
+        if (!newGroup.trim()) return;
+        await dispatch(groupActions.createGroup({name:newGroup}))
+        setNewGroup("");
     };
 
     return (
-        <div className="p-4">
-            <h2 className="text-xl mb-2">Список груп</h2>
-            {loading && <p>Завантаження...</p>}
-            {error && <p className="text-red-500">{error}</p>}
-            <ul className="mb-4">
-                {groups.map((group) => (
-                    <li key={group.id}>• {group.name}</li>
-                ))}
-            </ul>
+        <Box>
+            <FormControl fullWidth>
+                <InputLabel>Group</InputLabel>
+                <Select
+                    value={value?.toString() ?? ""}
+                    label="Group"
+                    onChange={(e) => onChange(e.target.value)}  // e.target.value буде string
+                >
+                    {groups.map(group => (
+                        <MenuItem key={group.id} value={group.id.toString()}>{group.name}</MenuItem>
+                    ))}
+                </Select>
 
-            <div className="flex gap-2">
-                <input
-                    type="text"
-                    placeholder="Нова група"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    className="border p-2"
+            </FormControl>
+            <Box mt={1} display="flex" gap={1}>
+                <TextField
+                    label="Нова група"
+                    value={newGroup}
+                    onChange={(e) => setNewGroup(e.target.value)}
+                    size="small"
+                    fullWidth
                 />
-                <button onClick={handleSubmit} className="bg-blue-500 text-white px-4 py-2">
-                    Додати
-                </button>
-            </div>
-        </div>
+                <Button
+                    onClick={handleCreateGroup}
+                    variant="outlined"
+                    sx={{ height: '40px' }}
+                >
+                    ADD Group
+                </Button>
+            </Box>
+        </Box>
     );
 };
 
-export {GroupList};
+export { Group };
