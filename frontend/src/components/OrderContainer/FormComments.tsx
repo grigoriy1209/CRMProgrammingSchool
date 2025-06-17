@@ -1,4 +1,4 @@
-import React, {FormEvent, useEffect, useState} from 'react';
+import React, {FormEvent, useEffect, useMemo, useState} from 'react';
 import {useAppDispatch, useAppSelector} from '../../hooks/reduxHooks';
 import dayjs from 'dayjs';
 import {commentActions} from "../../redux/slices/commentsSlise";
@@ -8,21 +8,24 @@ const FormComments = ({ orderId }: { orderId: number }) => {
     const [comment, setComment] = useState('');
     const [isCommentAllowed, setIsCommentAllowed] = useState(true);
 
-    const order = useAppSelector((state) => state.orders.orderInfo);
-    const user = useAppSelector((state) => state.users.user);
-    const comments = order?.comments || [];
+    const {orderInfo} = useAppSelector((state) => state.orders);
+    const {user} = useAppSelector((state) => state.users);
+    const comments = orderInfo?.comments || [];
+
+    const manager = useMemo(()=> user?.profile.surname ?? '', [user] ) ;
+
+
 
 
     useEffect(() => {
-        setIsCommentAllowed(!order?.manager && (order?.sq === 'New' || !order?.status));
-        console.log('Order with comments:', order);
-    }, [order]);
+        setIsCommentAllowed(!orderInfo?.manager && (orderInfo?.sq === 'New' || !orderInfo?.status));
+        console.log('Order with comments:', orderInfo);
+    }, [orderInfo]);
 
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
         if (comment.trim()) {
-            const manager = user?.profile.surname ?? '';
-            const newStatus = order?.status === 'New' || !order?.status ? 'In_Work' : order.status;
+            const newStatus = orderInfo?.status === 'New' || !orderInfo?.status ? 'In_Work' : orderInfo.status;
 
 
             dispatch(commentActions.addComment({ orderId, comment, manager, status: newStatus }));
@@ -35,15 +38,15 @@ const FormComments = ({ orderId }: { orderId: number }) => {
             <div className="mb-4">
                 {comments.length > 0 && (
                     <ul>
-                        {
-                            comments.map(({manager,created_at,text}, index) => (
-                                <li key={index} className="border-b py-2">
-                                    <p>{`${manager}: ${dayjs(created_at).format('MMMM DD, YYYY')}`}</p>
-                                    <p>{text}</p>
-                                </li>
-                            ))
-                        }
+                        {comments.map(({author, created_at, text}, index) => (
+                            <li key={index}>
+                                <p>Автор: {author || 'Unknown'}</p>
+                                <p>Дата: {created_at ? dayjs(created_at).format('YYYY-MM-DD HH:mm') : '---'}</p>
+                                <p>Текст: {text || '---'}</p>
+                            </li>
+                        ))}
                     </ul>
+
                 )}
             </div>
             {isCommentAllowed && (

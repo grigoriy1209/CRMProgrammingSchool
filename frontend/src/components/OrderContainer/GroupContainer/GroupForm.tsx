@@ -2,6 +2,7 @@ import React, {useEffect, useState} from "react";
 import {useAppDispatch, useAppSelector} from "../../../hooks/reduxHooks";
 import {groupActions} from "../../../redux/slices/groupSlice";
 import {Box, Button, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, TextField} from "@mui/material";
+import {orderActions} from "../../../redux/slices/ordersSlice";
 
 interface Props {
     value: string | number | null;
@@ -23,7 +24,8 @@ const Group = ({ value, onChange }: Props) => {
 
     const handleCreateGroup = async () => {
         if (!newGroup.trim()) return;
-        await dispatch(groupActions.createGroup({name:newGroup}))
+        await dispatch(groupActions.createGroup({name:newGroup}));
+        await dispatch(groupActions.getAllGroup());
         setNewGroup("");
     };
 
@@ -34,7 +36,7 @@ const Group = ({ value, onChange }: Props) => {
                 <Select
                     value={value?.toString() ?? ""}
                     label="Group"
-                    onChange={(e) => onChange(e.target.value)}  // e.target.value буде string
+                    onChange={(e) => onChange(e.target.value)}
                 >
                     {groups.map(group => (
                         <MenuItem key={group.id} value={group.id.toString()}>{group.name}</MenuItem>
@@ -44,7 +46,7 @@ const Group = ({ value, onChange }: Props) => {
             </FormControl>
             <Box mt={1} display="flex" gap={1}>
                 <TextField
-                    label="Нова група"
+                    label="New Group"
                     value={newGroup}
                     onChange={(e) => setNewGroup(e.target.value)}
                     size="small"

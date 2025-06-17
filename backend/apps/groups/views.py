@@ -12,7 +12,7 @@ from core.permissions.isSuper_permissions import IsSuperUser
 class GroupListCreateAPIView(GenericAPIView):
     queryset = GroupModel.objects.all()
     serializer_class = GroupSerializer
-    permission_classes = (IsManager, IsSuperUser)
+    permission_classes = (IsManager,)
 
     def get(self, request, *args, **kwargs):
         groups = self.get_queryset()

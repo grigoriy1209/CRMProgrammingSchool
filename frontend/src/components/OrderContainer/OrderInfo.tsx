@@ -1,9 +1,8 @@
-import React, {FC, useEffect, useState} from "react";
+import React, {FC, useState} from "react";
 import {Box, Button, Typography} from "@mui/material";
 import {FormComments} from "./FormComments";
 import {UpdateFormOrder} from "./UpdateFormOrder";
 import {useAppDispatch, useAppSelector} from "../../hooks/reduxHooks";
-import {orderActions} from "../../redux/slices/ordersSlice";
 import {IOrder} from "../../interfaces";
 
 
@@ -26,10 +25,7 @@ const OrderInfo: FC<IProps> = ({ order,onClose }) => {
 
             <Typography><strong>msg:</strong> {order.msg || "null"}</Typography>
             <Typography><strong>utm:</strong> {order.utm || "null"}</Typography>
-            <Typography><strong>Manager:</strong> {order.manager || ""}</Typography>
-
             <FormComments orderId={order.orderId} />
-
 
             <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
                 <Button

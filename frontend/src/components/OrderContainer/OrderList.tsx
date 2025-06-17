@@ -27,6 +27,7 @@ interface IColumn {
     key: keyof IOrder;
     label: string;
 }
+
 const OrdersList: FC = () => {
     const dispatch = useAppDispatch();
     const location = useLocation();
@@ -64,6 +65,7 @@ const OrdersList: FC = () => {
         {key: "group", label: "Group"},
         {key: "created_at", label: "Created At"},
         {key: "manager", label: "Manager"},
+
     ];
 
     const handleRowClick = (orderId: number) => {
@@ -71,7 +73,7 @@ const OrdersList: FC = () => {
     };
 
     return (
-        <Box sx={{width: "100%", backgroundColor: "#f5f5f5", padding: 0, margin:0 ,borderRadius: "0px"}}>
+        <Box sx={{width: "100%", backgroundColor: "#f5f5f5", padding: 0, margin: 0, borderRadius: "0px"}}>
             {orders.length ? (
                 <TableContainer component={Paper}>
                     <Table size="small">
@@ -105,13 +107,14 @@ const OrdersList: FC = () => {
                                             <TableCell colSpan={columns.length}>
                                                 <Accordion expanded>
                                                     <AccordionSummary
-                                                        expandIcon={<ExpandMoreIcon />}
+                                                        expandIcon={<ExpandMoreIcon/>}
                                                         aria-controls={`order-${order.id}-content`}
                                                         id={`order-${order.id}-header`}
                                                     >
                                                     </AccordionSummary>
                                                     <AccordionDetails>
-                                                        <OrderInfo order={order} onClose={() => setExpandedOrderId(null)}/>
+                                                        <OrderInfo order={order}
+                                                                   onClose={() => setExpandedOrderId(null)}/>
                                                     </AccordionDetails>
                                                 </Accordion>
                                             </TableCell>
@@ -127,7 +130,7 @@ const OrdersList: FC = () => {
                     No orders found
                 </Typography>
             )}
-            <Pagination />
+            <Pagination/>
         </Box>
     );
 };

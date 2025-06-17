@@ -1,5 +1,5 @@
 from django.db import transaction
-from django.http import JsonResponse
+from django.db.models import Prefetch
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 
@@ -75,8 +75,13 @@ class ApplicationRetrieveUpdateView(RetrieveUpdateAPIView):
         patch:Partial update a single application
     """
     serializer_class = ApplicationSerializer
-    queryset = OrderModels.objects.all()
     permission_classes = (IsManager,)
+    queryset = OrderModels.objects.prefetch_related(
+        Prefetch(
+            'comments',
+            queryset=CommentModels.objects.select_related('author__profile').exclude(author__isnull=True),
+        )
+    )
 
     def patch(self, request, *args, **kwargs):
         order = self.get_object()

@@ -40,50 +40,47 @@ const getById = createAsyncThunk<IOrder, string, { rejectValue: string }>(
     'orderSlice/byId',
     async (id, {rejectWithValue}) => {
         try {
-            const order = await orderServices.byId(id);
-            const orderData = order.data;
-            console.log(orderData);
-            if (!orderData) {
-                return rejectWithValue("Order not found");
-            }
-            return orderData;
+            return await orderServices.byId(id);
         } catch (e) {
             const error = e as AxiosError;
+            if (error.response?.status === 404) {
+                return rejectWithValue("Order not found");
+            }
             return rejectWithValue(error.message || "Unknown error");
         }
     }
 );
 
-const updateOrder = createAsyncThunk(
+const updateOrder = createAsyncThunk<
+    IOrder,
+    { orderId: string; data: Partial<IOrder> | IOrder; method: 'patch' | 'put' },
+    { rejectValue: string }>(
     'orderSlice/updateOrder',
-    async ({orderId, data}: { orderId: string, data: Partial<IOrder> }, {rejectWithValue}) => {
+    async ({orderId, data, method}, {rejectWithValue}) => {
         try {
-            const updated = await orderServices.update(orderId, data);
+            const updated = await orderServices.update(orderId, data, method);
             if (!updated) {
-                return rejectWithValue("not update");
+                return rejectWithValue("Update failed");
             }
             return updated;
         } catch (e: any) {
             return rejectWithValue(e.message || "Unknown error");
         }
-
     }
 )
-const allUpdateOrder = createAsyncThunk(
-    'orderSlice/allUpdateOrders',
-    async ({orderId, data}: { orderId: string, data: IOrder }, {rejectWithValue}) => {
+
+const addComment = createAsyncThunk(
+    'orderSlice/addComment',
+    async ({orderId, comment, manager, status}: { orderId: number, comment: string, manager: string, status: string },
+           {rejectWithValue}) => {
         try {
-            const allUpdate = await orderServices.allUpdateOrder(orderId, data);
-            if (!allUpdate) {
-                return rejectWithValue("No data received");
-            }
-            return allUpdate;
-        } catch (e: any) {
-            return rejectWithValue(e.message || "Unknown error");
+            const response = await orderServices.addComments(orderId.toString(), comment, manager, status);
+            return response
+        } catch (err: any) {
+            return rejectWithValue(err.response?.data || "Failed to add comment")
         }
     }
 )
-
 
 
 const setOrderInfo = (state: IState, action: PayloadAction<IOrder>) => {
@@ -119,24 +116,24 @@ const ordersSlice = createSlice({
             })
             .addCase(updateOrder.fulfilled, (state, action: PayloadAction<IOrder>) => {
                 state.orderInfo = action.payload;
+                state.orders = state.orders.map(order =>
+                    order.id === action.payload.id ? action.payload : order);
 
-                const index = state.orders.findIndex(order => order.id === action.payload.id);
-                if (index >= -1) {
-                    state.orders[index] = action.payload;
+            })
+            .addCase(addComment.fulfilled,(state, action:PayloadAction<IOrder | null>) => {
+                if (action.payload) {
+                    state.orderInfo = action.payload;
+                    state.error = null;
                 }
             })
-            .addCase(allUpdateOrder.fulfilled, (state, action: PayloadAction<IOrder>) => {
-                state.orderInfo = action.payload;
-            })
+
 
             .addCase(getAll.rejected, handleRejected)
             .addCase(getById.rejected, handleRejected)
             .addCase(updateOrder.rejected, (state, action) => {
                 state.error = action.payload as string;
             })
-            .addCase(allUpdateOrder.rejected, (state, action) => {
-                state.error = action.payload as string;
-            })
+
 
 });
 
@@ -147,7 +144,7 @@ const orderActions = {
     getAll,
     getById,
     updateOrder,
-    allUpdateOrder,
+    addComment,
 };
 
 export {orderActions, orderReducer};

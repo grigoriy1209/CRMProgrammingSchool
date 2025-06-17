@@ -1,11 +1,10 @@
 import React, {useEffect} from "react";
 import {SubmitHandler, useForm} from "react-hook-form";
-import {Box, Button, FormControl,Grid, InputLabel, MenuItem, Select, TextField} from "@mui/material";
+import {Box, Button, FormControl, Grid, InputLabel, MenuItem, Select, TextField} from "@mui/material";
 import {useAppDispatch} from "../../hooks/reduxHooks";
 import {orderActions} from "../../redux/slices/ordersSlice";
 import {IGroup, IOrder} from "../../interfaces";
 import {Group} from "./GroupContainer/GroupForm";
-
 
 
 const statuses = ["InWork", "New", "Agree", "Disagree", "Dubbing"];
@@ -47,7 +46,7 @@ const UpdateFormOrder = ({order, onClose}: IProps) => {
     const onSubmit: SubmitHandler<IOrder> = async (data) => {
         console.log("Submitting data:", data);
         try {
-            await dispatch(orderActions.updateOrder({orderId: order!.id.toString(), data}));
+            await dispatch(orderActions.updateOrder({orderId: order!.id.toString(), data, method:'patch'}));
             await dispatch(orderActions.getById(order!.id.toString()))
             onClose?.();
         } catch (error) {

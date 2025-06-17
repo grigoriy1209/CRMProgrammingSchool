@@ -14,6 +14,10 @@ class CommentSerializer(serializers.ModelSerializer):
             "text", "author", "created_at"
         )
 
+    def get_author(self, obj):
+        return getattr(obj.author.profile, "surname", "Unknown") if obj.author and hasattr(obj.author,
+                                                                                           "profile") else "Unknown"
+
 
 class ApplicationSerializer(serializers.ModelSerializer):
     comments = CommentSerializer(many=True, read_only=True)
@@ -58,10 +62,6 @@ class ApplicationSerializer(serializers.ModelSerializer):
 
     def get_group(self, obj):
         return obj.group.name if obj.group else None
-
-    # def create(self, validated_data: dict):
-    #     application = OrderModels.objects.create(**validated_data)
-    #     return application
 
     def update(self, instance, validated_data: dict):
         request = self.context.get('request')

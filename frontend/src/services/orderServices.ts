@@ -21,26 +21,35 @@ const orderServices = {
 
     },
 
-    update: async (orderId: string, data: Partial<IOrder>): Promise<IOrder | null> => {
+    update: async (orderId: string, data: Partial<IOrder> | IOrder,
+                   method: 'patch' | 'put' = 'patch'): Promise<IOrder | null> => {
         try {
-            const response = await apiServices.patch<IOrder>(urls.application.update(+orderId), data);
+            const url = urls.application.update(+orderId);
+            const response = method === "patch"
+                ? await apiServices.patch<IOrder>(url, data)
+                : await apiServices.put<IOrder>(url, data);
             return response.data;
         } catch (error) {
             return null;
         }
     },
 
-
-    allUpdateOrder: async (orderId: string,data:IOrder): Promise<IOrder | null> => {
+    addComments: async (orderId: string, comment: string, manager: string, status: string): Promise<IOrder | null> => {
         try {
-            const response = await apiServices.put<IOrder>(urls.application.update(+orderId), data);
-            return response.data
-        } catch (error) {
-            return null
-        }
-    },
+            const response = await apiServices.post<IOrder>(urls.application.addComment(+orderId), {
+                comment,
+                manager,
+                status
+            });
+            return response.data;
 
+        } catch (error) {
+            console.error("Error adding comments:", error);
+            return null;
+        }
+    }
 }
+
 export {
     orderServices,
 }
