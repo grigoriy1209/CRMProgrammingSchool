@@ -1,54 +1,61 @@
-import React, {FormEvent, useEffect, useMemo, useState} from 'react';
-import {useAppDispatch, useAppSelector} from '../../hooks/reduxHooks';
+import React, { FormEvent, useMemo, useState, useEffect } from 'react';
+import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks';
 import dayjs from 'dayjs';
-import {commentActions} from "../../redux/slices/commentsSlise";
+import { commentActions } from '../../redux/slices/commentsSlise';
+import { orderActions } from '../../redux/slices/ordersSlice';
 
 const FormComments = ({ orderId }: { orderId: number }) => {
     const dispatch = useAppDispatch();
     const [comment, setComment] = useState('');
-    const [isCommentAllowed, setIsCommentAllowed] = useState(true);
 
-    const {orderInfo} = useAppSelector((state) => state.orders);
-    const {user} = useAppSelector((state) => state.users);
-    const comments = orderInfo?.comments || [];
-
-    const manager = useMemo(()=> user?.profile.surname ?? '', [user] ) ;
-
-
-
+    const { user } = useAppSelector((state) => state.users);
+    const { orderInfo } = useAppSelector((state) => state.comments);
 
     useEffect(() => {
-        setIsCommentAllowed(!orderInfo?.manager && (orderInfo?.sq === 'New' || !orderInfo?.status));
-        console.log('Order with comments:', orderInfo);
-    }, [orderInfo]);
+        dispatch(orderActions.getById(orderId.toString()));
+    }, [dispatch, orderId]);
+
+    const comments = orderInfo?.comments || [];
+    const manager = useMemo(() => user?.profile?.surname ?? '', [user]);
+
+    const isCommentAllowed =
+        !orderInfo?.manager || String(orderInfo.manager) === manager;
 
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
-        if (comment.trim()) {
-            const newStatus = orderInfo?.status === 'New' || !orderInfo?.status ? 'In_Work' : orderInfo.status;
+        if (!comment.trim()) return;
 
+        const currentStatus = orderInfo?.status;
+        const newStatus = (!currentStatus || currentStatus === 'New') ? 'InWork' : currentStatus;
 
-            dispatch(commentActions.addComment({ orderId, comment, manager, status: newStatus }));
-            setComment('');
-        }
+        dispatch(commentActions.addComment({
+            orderId,
+            comment: comment.trim(),
+            manager,
+            status: newStatus,
+        })).then(() => {
+            dispatch(orderActions.getById(orderId.toString()));
+        });
+
+        setComment('');
     };
 
     return (
         <div>
             <div className="mb-4">
                 {comments.length > 0 && (
-                    <ul>
-                        {comments.map(({author, created_at, text}, index) => (
-                            <li key={index}>
-                                <p>Автор: {author || 'Unknown'}</p>
-                                <p>Дата: {created_at ? dayjs(created_at).format('YYYY-MM-DD HH:mm') : '---'}</p>
-                                <p>Текст: {text || '---'}</p>
+                    <ul className="space-y-2">
+                        {comments.map(({ author, created_at, text }, index) => (
+                            <li key={index} className="border p-2 rounded">
+                                <p><strong>Автор:</strong> {author || 'Unknown'}</p>
+                                <p><strong>Дата:</strong> {created_at ? dayjs(created_at).format('YYYY-MM-DD HH:mm') : '---'}</p>
+                                <p><strong>Текст:</strong> {text || '---'}</p>
                             </li>
                         ))}
                     </ul>
-
                 )}
             </div>
+
             {isCommentAllowed && (
                 <form onSubmit={handleSubmit} className="flex flex-col space-y-2">
                     <textarea
@@ -58,16 +65,23 @@ const FormComments = ({ orderId }: { orderId: number }) => {
                         className="border p-2 rounded-md"
                         rows={3}
                     />
-                    <button type="submit"
-                            disabled={!comment.trim()}
-                            className="bg-blue-500 text-white p-2 rounded-md"
+                    <button
+                        type="submit"
+                        disabled={!comment.trim()}
+                        className="bg-blue-500 text-white p-2 rounded-md"
                     >
-                        SUBMIT
+                        Submit
                     </button>
                 </form>
+            )}
+            {!isCommentAllowed && (
+                <p className="text-gray-500 italic">
+                    Коментарі дозволено лише, якщо заявка ще не взята або вона ваша.
+                </p>
             )}
         </div>
     );
 };
 
 export { FormComments };
+

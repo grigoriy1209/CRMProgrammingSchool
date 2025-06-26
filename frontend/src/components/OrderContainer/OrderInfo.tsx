@@ -1,31 +1,33 @@
-import React, {FC, useState} from "react";
-import {Box, Button, Typography} from "@mui/material";
-import {FormComments} from "./FormComments";
-import {UpdateFormOrder} from "./UpdateFormOrder";
-import {useAppDispatch, useAppSelector} from "../../hooks/reduxHooks";
-import {IOrder} from "../../interfaces";
-
+import React, { FC, useState, useEffect } from "react";
+import { Box, Button, Typography } from "@mui/material";
+import { FormComments } from "./FormComments";
+import { UpdateFormOrder } from "./UpdateFormOrder";
+import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks";
+import { IOrder } from "../../interfaces";
+import { orderActions } from "../../redux/slices/ordersSlice";
 
 interface IProps {
-    order: IOrder ;
+    order: IOrder;
     onClose: () => void;
 }
 
-
-const OrderInfo: FC<IProps> = ({ order,onClose }) => {
+const OrderInfo: FC<IProps> = ({ order, onClose }) => {
     const [showEditForm, setShowEditForm] = useState(false);
     const dispatch = useAppDispatch();
+    const { groups } = useAppSelector(state => state.groups);
+    const { orderInfo } = useAppSelector(state => state.comments);
 
-    const { groups } = useAppSelector(state => state.groups)
-
-
+    useEffect(() => {
+        dispatch(orderActions.getById(order.id.toString()));
+    }, [dispatch, order.id]);
 
     return (
         <Box sx={{ position: "relative", p: 2 }}>
+            <Typography><strong>msg:</strong> {orderInfo?.msg || order.msg || "null"}</Typography>
+            <Typography><strong>utm:</strong> {orderInfo?.utm || order.utm || "null"}</Typography>
 
-            <Typography><strong>msg:</strong> {order.msg || "null"}</Typography>
-            <Typography><strong>utm:</strong> {order.utm || "null"}</Typography>
-            <FormComments orderId={order.orderId} />
+            {/* Коментарі */}
+            <FormComments orderId={order.id} />
 
             <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
                 <Button
@@ -35,7 +37,6 @@ const OrderInfo: FC<IProps> = ({ order,onClose }) => {
                     Edit
                 </Button>
             </Box>
-
 
             {showEditForm && (
                 <Box
@@ -57,13 +58,10 @@ const OrderInfo: FC<IProps> = ({ order,onClose }) => {
                     }}
                 >
                     <UpdateFormOrder
-                        order={order}
+                        order={orderInfo || order}
                         onClose={() => setShowEditForm(false)}
                         groups={groups}
                     />
-                    <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
-
-                    </Box>
                 </Box>
             )}
         </Box>

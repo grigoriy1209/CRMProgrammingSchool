@@ -2,6 +2,6 @@ import {IUser} from "./userInterfaces";
 
 export interface IComment{
     id:number,
-    autor:IUser,
+    author:string,
     text:string,
 }
