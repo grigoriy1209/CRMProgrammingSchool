@@ -6,9 +6,11 @@ const _accessTokenKey = "access";
 const _refreshTokenKey = "refresh";
 
 const authServices = {
-    async login (user:{email: string, password: string}){
-        const {data:{access,refresh}}=await apiServices.post<IToken>(urls.auth.login, user);
-         authServices.setToken({access,refresh,});
+    async login(user: { email: string; password: string }): Promise<IToken> {
+        const { data: { access, refresh } } = await apiServices.post<IToken>(urls.auth.login, user);
+        const token = { access, refresh };
+        this.setToken(token);
+        return token;
     },
     setToken({refresh,access}:IToken):void{
         localStorage.setItem(_accessTokenKey, (access));

@@ -1,0 +1,27 @@
+.session-expired-container {
+    text-align: center;
+    padding: 4rem;
+    background-color: #fff3f3;
+    border-radius: 12px;
+    max-width: 500px;
+    margin: 5rem auto;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.session-expired-container h1 {
+    color: #d9534f;
+}
+
+.session-expired-container button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #0275d8;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.session-expired-container button:hover {
+    background-color: #025aa5;
+}

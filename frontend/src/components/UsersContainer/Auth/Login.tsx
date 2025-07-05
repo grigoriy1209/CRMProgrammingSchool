@@ -1,10 +1,11 @@
-import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
-import { authServices } from "../../../services/authServices";
-import React, { useState } from "react";
-import { Box, Button, Container, TextField, Typography } from "@mui/material";
-import { styled } from "@mui/system";
+import {useForm} from "react-hook-form";
+import {useNavigate} from "react-router-dom";
+import React, {useState} from "react";
+import {Box, Button, Container, TextField, Typography} from "@mui/material";
+import {styled} from "@mui/system";
 import {IAuth} from "../../../interfaces";
+import {useAppDispatch} from "../../../hooks/reduxHooks";
+import {authActions} from "../../../redux/slices/authSlise";
 
 const StyledForm = styled(Box)({
     display: "flex",
@@ -17,14 +18,15 @@ const StyledForm = styled(Box)({
 });
 
 const Login = () => {
-    const { handleSubmit, register, setError, formState: { errors, isSubmitting } } = useForm<IAuth>();
+    const {handleSubmit, register, setError, formState: {errors, isSubmitting}} = useForm<IAuth>();
     const navigate = useNavigate();
+    const dispatch = useAppDispatch();
     const [serverError, setServerError] = useState<string | null>(null);
 
     const login = async (user: { email: string, password: string }) => {
         try {
             setServerError(null);
-            await authServices.login(user);
+            await dispatch(authActions.login(user)).unwrap();
             navigate("/application");
         } catch (err: any) {
             console.log(err);
@@ -32,8 +34,8 @@ const Login = () => {
 
 
             if (err.response?.status === 400) {
-                setError("email", { message: "Невірний email або пароль" });
-                setError("password", { message: "Перевірте пароль" });
+                setError("email", {message: "Невірний email або пароль"});
+                setError("password", {message: "Перевірте пароль"});
             }
         }
     };
@@ -47,7 +49,7 @@ const Login = () => {
                     variant="outlined"
                     fullWidth
 
-                    {...register("email", { required: "Email є обов'язковим" })}
+                    {...register("email", {required: "Email є обов'язковим"})}
                 />
                 <TextField
                     label="Пароль"
@@ -55,7 +57,7 @@ const Login = () => {
                     variant="outlined"
                     fullWidth
 
-                    {...register("password", { required: "Пароль є обов'язковим" })}
+                    {...register("password", {required: "Пароль є обов'язковим"})}
                 />
                 {serverError && <Typography color="error">{serverError}</Typography>}
                 <Button
@@ -72,4 +74,4 @@ const Login = () => {
     );
 };
 
-export { Login };
+export {Login};
