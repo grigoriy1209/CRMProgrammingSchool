@@ -2,7 +2,7 @@ import {FC} from "react";
 import {useNavigate} from "react-router-dom";
 
 const SessionExpired: FC = () => {
-    let navigate = useNavigate();
+    const navigate = useNavigate();
 
     const handleLogin = () => {
         navigate('/login')

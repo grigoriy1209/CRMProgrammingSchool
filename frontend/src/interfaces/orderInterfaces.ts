@@ -1,5 +1,4 @@
 import {IUser} from "./userInterfaces";
-import {IGroup} from "./groupInterface";
 
 export interface IOrder {
     id: number,
@@ -23,9 +22,9 @@ export interface IOrder {
     comments: IComments[]
 }
 export interface IComments {
-    manager: IUser;
+    author: IUser | null;
     id: number,
-    author: string,
-    text: string,
+    comment: string,
     created_at: string,
+    order_id: number,
 }

@@ -9,18 +9,27 @@ const FormComments = ({ orderId }: { orderId: number }) => {
     const [comment, setComment] = useState('');
 
     const { user } = useAppSelector((state) => state.users);
-    const { orderInfo } = useAppSelector((state) => state.comments);
+    const orderInfo = useAppSelector((state) => state.orders.orderInfo);
+    console.log('orderInfo', orderInfo);
 
     useEffect(() => {
         dispatch(orderActions.getById(orderId.toString()));
     }, [dispatch, orderId]);
 
     const comments = orderInfo?.comments || [];
-    const manager = useMemo(() => user?.profile?.surname ?? '', [user]);
+    // const manager = useMemo(() => user?.profile?.surname ?? '', [user]);
+    const manager = user?.profile?.surname?.trim() || '';
+    //
+    // const isCommentAllowed =
+    //     !orderInfo?.manager || String(orderInfo.manager) === manager;
+    const normalizedManager = manager.toLowerCase().trim();
+    const normalizedOrderManager = String(orderInfo?.manager ?? '').toLowerCase().trim();
 
-    const isCommentAllowed =
-        !orderInfo?.manager || String(orderInfo.manager) === manager;
-
+    const isCommentAllowed = true
+    //     !orderInfo?.manager || normalizedOrderManager === normalizedManager;
+    // const handleSubmit = (e: FormEvent) => {
+    //     e.preventDefault();
+    //     if (!comment.trim()) return;
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
         if (!comment.trim()) return;
@@ -44,17 +53,22 @@ const FormComments = ({ orderId }: { orderId: number }) => {
         <div>
             <div className="mb-4">
                 {comments.length > 0 && (
-                    <ul className="space-y-2">
-                        {comments.map(({ author, created_at, text }, index) => (
-                            <li key={index} className="border p-2 rounded">
-                                <p><strong>Автор:</strong> {author || 'Unknown'}</p>
-                                <p><strong>Дата:</strong> {created_at ? dayjs(created_at).format('YYYY-MM-DD HH:mm') : '---'}</p>
-                                <p><strong>Текст:</strong> {text || '---'}</p>
+                    <ul>
+                        {comments.map(({author, created_at, comment}, index) => (
+                            <li key={index} className="border p-2 rounded mb-2">
+                                <div>
+                                    <p><strong>Автор:</strong> {author?.profile?.name || 'Unknown'}</p>
+                                    <p>
+                                        <strong>Дата:</strong> {created_at ? dayjs(created_at).format('YYYY-MM-DD HH:mm') : '---'}
+                                    </p>
+                                    <p><strong>Текст:</strong> {comment || '---'}</p>
+                                </div>
                             </li>
                         ))}
                     </ul>
                 )}
             </div>
+
 
             {isCommentAllowed && (
                 <form onSubmit={handleSubmit} className="flex flex-col space-y-2">
@@ -74,14 +88,14 @@ const FormComments = ({ orderId }: { orderId: number }) => {
                     </button>
                 </form>
             )}
-            {!isCommentAllowed && (
-                <p className="text-gray-500 italic">
-                    Коментарі дозволено лише, якщо заявка ще не взята або вона ваша.
-                </p>
-            )}
+            {/*{!isCommentAllowed && (*/}
+            {/*    <p className="text-gray-500 italic">*/}
+            {/*        Коментарі дозволено лише, якщо заявка ще не взята або вона ваша.*/}
+            {/*    </p>*/}
+            {/*)}*/}
         </div>
     );
 };
 
-export { FormComments };
+export {FormComments};
 

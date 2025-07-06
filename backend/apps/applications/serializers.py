@@ -5,24 +5,37 @@ from apps.groups.models import GroupModel
 
 
 class CommentSerializer(serializers.ModelSerializer):
-    author = serializers.CharField(source="author.profile.surname", read_only=True)
-    created_at = serializers.DateTimeField()
+    # author = serializers.CharField(source="author.profile.surname", read_only=True)
+    # created_at = serializers.DateTimeField()
+    author = serializers.SerializerMethodField()
 
     class Meta:
         model = CommentModels
         fields = (
-            "text", "author", "created_at"
+            "id",
+            "comment",
+            "created_at",
+            'order_id',
+            "author",
         )
 
     def get_author(self, obj):
-        return getattr(obj.author.profile, "surname", "Unknown") if obj.author and hasattr(obj.author,
-                                                                                           "profile") else "Unknown"
+        if obj.author and hasattr(obj.author, 'profile'):
+            return {
+                "id": obj.author.id,
+                "name": obj.author.profile.name,
+                "surname": obj.author.profile.surname,
+                "user": obj.author.id,
+
+            }
+        return None
 
 
 class ApplicationSerializer(serializers.ModelSerializer):
     comments = CommentSerializer(many=True, read_only=True)
     manager = serializers.SerializerMethodField()
     group = serializers.SerializerMethodField(read_only=True)
+
     group_id = serializers.PrimaryKeyRelatedField(
         queryset=GroupModel.objects.all(),
         source="group",
@@ -58,7 +71,14 @@ class ApplicationSerializer(serializers.ModelSerializer):
         ordering = ('-created_at',)
 
     def get_manager(self, obj):
-        return obj.manager.profile.surname if obj.manager else None
+        if obj.manager and hasattr(obj.manager, "profile"):
+            return {
+                "id": obj.manager.id,
+                "name": obj.manager.profile.name,
+                "surname": obj.manager.profile.surname,
+                "user": obj.manager.id
+            }
+        return None
 
     def get_group(self, obj):
         return obj.group.name if obj.group else None
