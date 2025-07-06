@@ -15,7 +15,7 @@ const OrderInfo: FC<IProps> = ({ order, onClose }) => {
     const [showEditForm, setShowEditForm] = useState(false);
     const dispatch = useAppDispatch();
     const { groups } = useAppSelector(state => state.groups);
-    const { orderInfo } = useAppSelector(state => state.comments);
+    const  orderInfo  = useAppSelector(state => state.orders.orderInfo);
 
     useEffect(() => {
         dispatch(orderActions.getById(order.id.toString()));
@@ -26,7 +26,7 @@ const OrderInfo: FC<IProps> = ({ order, onClose }) => {
             <Typography><strong>msg:</strong> {orderInfo?.msg || order.msg || "null"}</Typography>
             <Typography><strong>utm:</strong> {orderInfo?.utm || order.utm || "null"}</Typography>
 
-            {/* Коментарі */}
+
             <FormComments orderId={order.id} />
 
             <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>

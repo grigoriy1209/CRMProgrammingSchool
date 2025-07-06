@@ -7,7 +7,7 @@ from apps.groups.models import GroupModel
 class CommentSerializer(serializers.ModelSerializer):
     # author = serializers.CharField(source="author.profile.surname", read_only=True)
     # created_at = serializers.DateTimeField()
-    author = serializers.SerializerMethodField()
+    manager = serializers.SerializerMethodField()
 
     class Meta:
         model = CommentModels
@@ -16,16 +16,16 @@ class CommentSerializer(serializers.ModelSerializer):
             "comment",
             "created_at",
             'order_id',
-            "author",
+            "manager",
         )
 
-    def get_author(self, obj):
-        if obj.author and hasattr(obj.author, 'profile'):
+    def get_manager(self, obj):
+        if obj.manager and hasattr(obj.manager, 'profile'):
             return {
-                "id": obj.author.id,
-                "name": obj.author.profile.name,
-                "surname": obj.author.profile.surname,
-                "user": obj.author.id,
+                "id": obj.manager.id,
+                "name": obj.manager.profile.name,
+                "surname": obj.manager.profile.surname,
+                "user": obj.manager.id,
 
             }
         return None

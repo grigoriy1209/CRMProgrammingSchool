@@ -61,6 +61,6 @@ class CommentModels(models.Model):
         db_table = 'comments'
 
     order = models.ForeignKey(OrderModels, on_delete=models.CASCADE, related_name='comments')
-    author = models.ForeignKey(UserModel, on_delete=models.CASCADE, null=True, related_name='comments')
+    manager = models.ForeignKey(UserModel, on_delete=models.CASCADE, null=True, related_name='comments')
     comment = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)

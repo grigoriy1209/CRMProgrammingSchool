@@ -1,4 +1,4 @@
-import {IUser} from "./userInterfaces";
+import {IComments} from "./commentInterface";
 
 export interface IOrder {
     id: number,
@@ -20,11 +20,4 @@ export interface IOrder {
     utm: string,
     [key: string]: any;
     comments: IComments[]
-}
-export interface IComments {
-    author: IUser | null;
-    id: number,
-    comment: string,
-    created_at: string,
-    order_id: number,
 }

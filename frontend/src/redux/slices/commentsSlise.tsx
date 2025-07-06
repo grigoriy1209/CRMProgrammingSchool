@@ -1,10 +1,10 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { IComment } from "../../interfaces/commentInterface";
+import { IComments } from "../../interfaces/commentInterface";
 import { IOrder } from "../../interfaces";
 import { commentService } from "../../services/commentService";
 
 interface IState {
-    comments: IComment[];
+    comments: IComments[];
     orderInfo: IOrder | null;
     error: string | null;
 }

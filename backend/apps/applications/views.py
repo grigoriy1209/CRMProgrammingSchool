@@ -79,7 +79,7 @@ class ApplicationRetrieveUpdateView(RetrieveUpdateAPIView):
     queryset = OrderModels.objects.prefetch_related(
         Prefetch(
             'comments',
-            queryset=CommentModels.objects.select_related('author__profile').exclude(author__isnull=True),
+            queryset=CommentModels.objects.select_related('manager__profile').exclude(manager__isnull=True),
         )
     )
 

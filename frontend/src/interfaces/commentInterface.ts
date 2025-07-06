@@ -1,7 +1,8 @@
 import {IUser} from "./userInterfaces";
 
-export interface IComment{
+export interface IComments{
     id:number,
-    author:string,
-    text:string,
+    manager:IUser | null,
+    comment:string,
+    created_at:number,
 }
