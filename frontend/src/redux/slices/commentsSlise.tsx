@@ -17,7 +17,7 @@ const initialState: IState = {
 
 const addComment = createAsyncThunk(
     'commentsSlice/addComment',
-    async ({ orderId, comment, manager, status }: { orderId: number, comment: string, manager: string, status: string },
+    async ({ orderId, comment, manager, status }: { orderId:number, comment: string, manager: string, status: string },
            { rejectWithValue }) => {
         try {
             return await commentService.addComments(orderId.toString(), comment, manager, status);
@@ -36,7 +36,7 @@ const commentsSlice = createSlice({
             .addCase(addComment.fulfilled, (state, action: PayloadAction<IOrder | null>) => {
                 if (action.payload) {
                     state.orderInfo = action.payload;
-                    state.comments = action.payload.comments || [];
+                    state.comments = action.payload.comments ?? [];
                     state.error = null;
                 }
             })

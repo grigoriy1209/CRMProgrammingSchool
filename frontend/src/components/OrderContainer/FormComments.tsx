@@ -18,8 +18,8 @@ const FormComments = ({ orderId }: { orderId: number }) => {
     const comments = orderInfo?.comments || [];
     const manager = useMemo(() => user?.profile?.surname ?? '', [user]);
 
-    const isCommentAllowed = true
-    // !orderInfo?.manager || String(orderInfo.manager) === manager;
+    const isCommentAllowed =
+    !orderInfo?.manager || String(orderInfo.manager) === manager;
 
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
@@ -48,9 +48,15 @@ const FormComments = ({ orderId }: { orderId: number }) => {
                         {comments.map(({ manager, created_at, comment }, index) => (
                             <li key={index} className="border p-2 rounded">
                                 <li key={index}>
-                                    Автор: {typeof manager === "object" ? manager?.profile?.surname : String(manager)}
+                                    Автор: {
+                                    typeof manager === "object"
+                                        ? manager?.profile?.surname ||'---'
+                                        : String(manager)
+                                }
                                 </li>
-                                <p><strong>Дата:</strong> {created_at ? dayjs(created_at).format('YYYY-MM-DD HH:mm') : '---'}</p>
+                                <p>
+                                    <strong>Дата:</strong> {created_at ? dayjs(created_at).format('YYYY-MM-DD HH:mm') : '---'}
+                                </p>
                                 <p><strong>Текст:</strong> {comment || '---'}</p>
                             </li>
                         ))}

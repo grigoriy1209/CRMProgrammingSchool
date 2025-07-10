@@ -5,7 +5,7 @@ from django.utils.decorators import method_decorator
 
 from rest_framework import status
 from rest_framework.filters import OrderingFilter
-from rest_framework.generics import GenericAPIView, RetrieveUpdateAPIView, get_object_or_404
+from rest_framework.generics import CreateAPIView, GenericAPIView, RetrieveUpdateAPIView, get_object_or_404
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -88,28 +88,35 @@ class ApplicationRetrieveUpdateView(RetrieveUpdateAPIView):
         return super().patch(request, *args, **kwargs)
 
 
-class AddCommentView(GenericAPIView):
-    """
-    post: Add a comment to the application and update status and manager if necessary.
-    """
+class CommentListView(GenericAPIView):
     serializer_class = CommentSerializer
-    queryset = CommentModels.objects.all()
+    permission_classes = (IsManager,)
+
+    def get(self, *args, **kwargs):
+        order_id = kwargs.get('pk')
+        order = get_object_or_404(OrderModels, pk=order_id)
+
+        comments = CommentModels.objects.filter(order=order).order_by('created_at')
+        serializer = self.serializer_class(comments, many=True)
+        return Response(serializer.data)
+
+
+class CommentCreateView(CreateAPIView):
+    serializer_class = CommentSerializer
     permission_classes = (IsManager,)
 
     def post(self, request, *args, **kwargs):
         order_id = kwargs.get('pk')
-        order = get_object_or_404(OrderModels, id=order_id)
+        order = get_object_or_404(OrderModels, pk=order_id)
 
         if order.manager is not None and order.manager != request.user:
-            return Response({'message': "You can only comment on orders that are unassigned or assigned to you"},
-                            status=status.HTTP_403_FORBIDDEN)
+            return Response({'error': 'Only manager can create comments'}, 403)
 
         comment_data = request.data.get('comment')
         if not comment_data:
-            return Response({'message': "Comment required"}, status=status.HTTP_400_BAD_REQUEST, )
-
+            return Response({'error': ' comment required'}, 400)
         with transaction.atomic():
-            order = OrderModels.objects.select_for_update().get(id=order_id)
+            order = OrderModels.objects.select_for_update().get(pk=order_id)
 
             if order.manager is None:
                 order.manager = request.user
@@ -120,10 +127,9 @@ class AddCommentView(GenericAPIView):
 
             comment = CommentModels.objects.create(
                 order=order,
-                text=comment_data,
-                author=request.user,
+                comment=comment_data,
+                manager=request.user,
                 created_at=timezone.now(),
             )
-
-        serializer = CommentSerializer(comment)
+        serializer = self.serializer_class(comment)
         return Response(serializer.data, status=status.HTTP_201_CREATED)

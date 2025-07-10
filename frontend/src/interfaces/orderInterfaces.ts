@@ -1,4 +1,5 @@
 import {IComments} from "./commentInterface";
+import {IUser} from "./userInterfaces";
 
 export interface IOrder {
     id: number,
@@ -14,7 +15,7 @@ export interface IOrder {
     sum: string,
     alreadyPaid: string,
     created_at:string,
-    manager: number,
+    manager: IUser | null,
     group_id?: number | null,
     msg: string,
     utm: string,

@@ -27,7 +27,7 @@ const OrderInfo: FC<IProps> = ({ order, onClose }) => {
             <Typography><strong>utm:</strong> {orderInfo?.utm || order.utm || "null"}</Typography>
 
 
-            <FormComments orderId={order.id} />
+            {/*<FormComments orderId={order.id} />*/}
 
             <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
                 <Button

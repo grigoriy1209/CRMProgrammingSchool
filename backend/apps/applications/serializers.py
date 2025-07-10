@@ -1,13 +1,30 @@
 from rest_framework import serializers
 
+from apps.all_users_info.auth.views import UserModel
+from apps.all_users_info.users.models import ProfileModel
+from apps.all_users_info.users.serializers import UserSerializer
 from apps.applications.models import CommentModels, OrderModels
 from apps.groups.models import GroupModel
+
+
+class ProfileShortSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProfileModel
+        fields = ('name', "surname")
+
+
+class CommentManagerSerializer(serializers.ModelSerializer):
+    profile = ProfileShortSerializer(read_only=True)
+
+    class Meta:
+        model = UserModel
+        fields = ("id", "profile",)
 
 
 class CommentSerializer(serializers.ModelSerializer):
     # author = serializers.CharField(source="author.profile.surname", read_only=True)
     # created_at = serializers.DateTimeField()
-    manager = serializers.SerializerMethodField()
+    manager = CommentManagerSerializer(read_only=True)
 
     class Meta:
         model = CommentModels
@@ -15,25 +32,26 @@ class CommentSerializer(serializers.ModelSerializer):
             "id",
             "comment",
             "created_at",
-            'order_id',
+            "order_id",
             "manager",
         )
 
-    def get_manager(self, obj):
-        if obj.manager and hasattr(obj.manager, 'profile'):
-            return {
-                "id": obj.manager.id,
-                "name": obj.manager.profile.name,
-                "surname": obj.manager.profile.surname,
-                "user": obj.manager.id,
-
-            }
-        return None
+    # def get_manager(self, obj):
+    #     if obj.manager and hasattr(obj.manager, 'profile'):
+    #         return {
+    #             "id": obj.manager.id,
+    #             "name": obj.manager.profile.name,
+    #             "surname": obj.manager.profile.surname,
+    #             "user": obj.manager.id,
+    #
+    #         }
+    #     return None
 
 
 class ApplicationSerializer(serializers.ModelSerializer):
     comments = CommentSerializer(many=True, read_only=True)
-    manager = serializers.SerializerMethodField()
+    # manager = serializers.SerializerMethodField()
+    manager = CommentManagerSerializer(read_only=True)
     group = serializers.SerializerMethodField(read_only=True)
 
     group_id = serializers.PrimaryKeyRelatedField(
@@ -70,15 +88,15 @@ class ApplicationSerializer(serializers.ModelSerializer):
         read_only_fields = ('id', 'created_at',)
         ordering = ('-created_at',)
 
-    def get_manager(self, obj):
-        if obj.manager and hasattr(obj.manager, "profile"):
-            return {
-                "id": obj.manager.id,
-                "name": obj.manager.profile.name,
-                "surname": obj.manager.profile.surname,
-                "user": obj.manager.id
-            }
-        return None
+    # def get_manager(self, obj):
+    #     if obj.manager and hasattr(obj.manager, "profile"):
+    #         return {
+    #             "id": obj.manager.id,
+    #             "name": obj.manager.profile.name,
+    #             "surname": obj.manager.profile.surname,
+    #             "user": obj.manager.id
+    #         }
+    #     return None
 
     def get_group(self, obj):
         return obj.group.name if obj.group else None
