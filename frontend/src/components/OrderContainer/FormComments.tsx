@@ -1,43 +1,44 @@
-import React, { FormEvent, useMemo, useState, useEffect } from 'react';
-import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks';
+import React, {FormEvent, useState} from 'react';
+import {useAppDispatch, useAppSelector} from '../../hooks/reduxHooks';
 import dayjs from 'dayjs';
-import { commentActions } from '../../redux/slices/commentsSlise';
-import { orderActions } from '../../redux/slices/ordersSlice';
+import {commentActions} from '../../redux/slices/commentsSlise';
+import {orderActions} from "../../redux/slices/ordersSlice";
+import {ManagerName} from "./ManagerName";
 
-const FormComments = ({ orderId }: { orderId: number }) => {
+const FormComments = ({orderId}: { orderId: number }) => {
     const dispatch = useAppDispatch();
     const [comment, setComment] = useState('');
 
-    const { user } = useAppSelector((state) => state.users);
-    const  orderInfo  = useAppSelector((state) => state.orders.orderInfo);
-
-    useEffect(() => {
-        dispatch(orderActions.getById(orderId.toString()));
-    }, [dispatch, orderId]);
+    const {user} = useAppSelector((state) => state.users);
+    const orderInfo = useAppSelector((state) => state.orders.orderInfo);
 
     const comments = orderInfo?.comments || [];
-    const manager = useMemo(() => user?.profile?.surname ?? '', [user]);
+
+    const managerId = user?.id;
 
     const isCommentAllowed =
-    !orderInfo?.manager || String(orderInfo.manager) === manager;
+        !orderInfo?.manager ||
+        (typeof orderInfo.manager === "object" && orderInfo.manager.id === managerId) ||
+        (typeof orderInfo.manager === "number" && orderInfo.manager === managerId);
 
-    const handleSubmit = (e: FormEvent) => {
+
+
+    const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
         if (!comment.trim()) return;
 
         const currentStatus = orderInfo?.status;
         const newStatus = (!currentStatus || currentStatus === 'New') ? 'InWork' : currentStatus;
 
-        dispatch(commentActions.addComment({
+        await dispatch(commentActions.addComment({
             orderId,
             comment: comment.trim(),
-            manager,
-            status: newStatus,
-        })).then(() => {
-            dispatch(orderActions.getById(orderId.toString()));
-        });
+        }));            // status: newStatus
+
 
         setComment('');
+        dispatch(commentActions.getComments(orderId));  // опційно — якщо у тебе є окреме завантаження коментарів
+        dispatch(orderActions.getById(orderId.toString())); // оновити orderInfo
     };
 
     return (
@@ -45,19 +46,13 @@ const FormComments = ({ orderId }: { orderId: number }) => {
             <div className="mb-4">
                 {comments.length > 0 && (
                     <ul className="space-y-2">
-                        {comments.map(({ manager, created_at, comment }, index) => (
+                        {comments.map(({manager, created_at, comment}, index) => (
                             <li key={index} className="border p-2 rounded">
-                                <li key={index}>
-                                    Автор: {
-                                    typeof manager === "object"
-                                        ? manager?.profile?.surname ||'---'
-                                        : String(manager)
-                                }
-                                </li>
+                               <p> <strong>Автор:</strong><ManagerName manager={manager}/></p>
                                 <p>
-                                    <strong>Дата:</strong> {created_at ? dayjs(created_at).format('YYYY-MM-DD HH:mm') : '---'}
+                                    <strong>Дата:</strong> {created_at ? dayjs(created_at).format('YYYY-MM-DD HH:mm') : '—'}
                                 </p>
-                                <p><strong>Текст:</strong> {comment || '---'}</p>
+                                <p><strong>Текст:</strong> {comment || '—'}</p>
                             </li>
                         ))}
                     </ul>
@@ -86,4 +81,4 @@ const FormComments = ({ orderId }: { orderId: number }) => {
     );
 };
 
-export { FormComments };
+export {FormComments};

@@ -15,7 +15,7 @@ export interface IOrder {
     sum: string,
     alreadyPaid: string,
     created_at:string,
-    manager: IUser | null,
+    manager:IUser | number|null,
     group_id?: number | null,
     msg: string,
     utm: string,

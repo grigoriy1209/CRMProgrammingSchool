@@ -2,7 +2,6 @@ from rest_framework import serializers
 
 from apps.all_users_info.auth.views import UserModel
 from apps.all_users_info.users.models import ProfileModel
-from apps.all_users_info.users.serializers import UserSerializer
 from apps.applications.models import CommentModels, OrderModels
 from apps.groups.models import GroupModel
 
@@ -110,7 +109,6 @@ class ApplicationSerializer(serializers.ModelSerializer):
 
             group = validated_data.get('group_id')
             if group:
-                instance.group = group
-            instance.save()
+                validated_data['group'] = group
 
         return super().update(instance, validated_data)

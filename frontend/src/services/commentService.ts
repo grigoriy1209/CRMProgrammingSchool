@@ -1,23 +1,16 @@
-import {IOrder} from "../interfaces";
+import {IComments} from "../interfaces/commentInterface";
 import {apiServices} from "./apiServices";
-import {urls} from "../constants/urls";
 
 const commentService = {
-
-    addComments: async (orderId: string, comment: string, manager: string, status: string): Promise<IOrder | null> => {
-        try {
-            const response = await apiServices.post<IOrder>(urls.application.addComment(+orderId), {
-                comment,
-                manager,
-                status
-            });
-            return response.data;
-
-        } catch (error) {
-            return null;
-        }
+    getComments:async (orgId: string): Promise<IComments[]> => {
+         const response = await apiServices.get(`/comments?${orgId}`);
+         return response.data;
+    },
+    addComment: async (orderId:string, comment:string):Promise<IComments> => {
+        const response = await apiServices.post(`/comments?${orderId}/`,{comment:comment});
+        return response.data;
     }
 }
 export {
-    commentService,
+    commentService
 }

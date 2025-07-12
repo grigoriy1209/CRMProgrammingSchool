@@ -15,25 +15,25 @@ const OrderInfo: FC<IProps> = ({ order, onClose }) => {
     const [showEditForm, setShowEditForm] = useState(false);
     const dispatch = useAppDispatch();
     const { groups } = useAppSelector(state => state.groups);
-    const  orderInfo  = useAppSelector(state => state.orders.orderInfo);
+    const orderInfo = useAppSelector(state => state.orders.orderInfo);
 
     useEffect(() => {
-        dispatch(orderActions.getById(order.id.toString()));
-    }, [dispatch, order.id]);
+        if (!orderInfo || orderInfo.id !== order.id) {
+            dispatch(orderActions.getById(order.id.toString()));
+        }
+    }, [dispatch, order.id, orderInfo]);
+
+    const currentOrder = orderInfo || order;
 
     return (
         <Box sx={{ position: "relative", p: 2 }}>
-            <Typography><strong>msg:</strong> {orderInfo?.msg || order.msg || "null"}</Typography>
-            <Typography><strong>utm:</strong> {orderInfo?.utm || order.utm || "null"}</Typography>
+            <Typography><strong>msg:</strong> {currentOrder.msg || "—"}</Typography>
+            <Typography><strong>utm:</strong> {currentOrder.utm || "—"}</Typography>
 
-
-            {/*<FormComments orderId={order.id} />*/}
+            <FormComments orderId={order.id} />
 
             <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
-                <Button
-                    variant="contained"
-                    onClick={() => setShowEditForm(true)}
-                >
+                <Button variant="contained" onClick={() => setShowEditForm(true)}>
                     Edit
                 </Button>
             </Box>
@@ -57,8 +57,16 @@ const OrderInfo: FC<IProps> = ({ order, onClose }) => {
                         border: "3px solid limegreen"
                     }}
                 >
+                    <Button
+                        size="small"
+                        onClick={() => setShowEditForm(false)}
+                        sx={{ position: "absolute", top: 8, right: 8 }}
+                    >
+                        ❌
+                    </Button>
+
                     <UpdateFormOrder
-                        order={orderInfo || order}
+                        order={currentOrder}
                         onClose={() => setShowEditForm(false)}
                         groups={groups}
                     />
@@ -69,5 +77,4 @@ const OrderInfo: FC<IProps> = ({ order, onClose }) => {
 };
 
 export { OrderInfo };
-
 

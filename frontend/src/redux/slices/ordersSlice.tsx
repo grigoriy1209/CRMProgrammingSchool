@@ -69,19 +69,6 @@ const updateOrder = createAsyncThunk<
     }
 )
 
-const addComment = createAsyncThunk(
-    'orderSlice/addComment',
-    async ({orderId, comment, manager, status}: { orderId: number, comment: string, manager: string, status: string },
-           {rejectWithValue}) => {
-        try {
-            const response = await orderServices.addComments(orderId.toString(), comment, manager, status);
-            return response
-        } catch (err: any) {
-            return rejectWithValue(err.response?.data || "Failed to add comment")
-        }
-    }
-)
-
 
 const setOrderInfo = (state: IState, action: PayloadAction<IOrder>) => {
     state.orderInfo = action.payload;
@@ -120,14 +107,6 @@ const ordersSlice = createSlice({
                     order.id === action.payload.id ? action.payload : order);
 
             })
-            .addCase(addComment.fulfilled,(state, action:PayloadAction<IOrder | null>) => {
-                if (action.payload) {
-                    state.orderInfo = action.payload;
-                    state.error = null;
-                }
-            })
-
-
             .addCase(getAll.rejected, handleRejected)
             .addCase(getById.rejected, handleRejected)
             .addCase(updateOrder.rejected, (state, action) => {
@@ -144,7 +123,6 @@ const orderActions = {
     getAll,
     getById,
     updateOrder,
-    addComment,
 };
 
 export {orderActions, orderReducer};
