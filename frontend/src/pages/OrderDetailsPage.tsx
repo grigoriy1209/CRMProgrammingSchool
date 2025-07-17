@@ -19,21 +19,6 @@ const OrderDetailsPage = () => {
 
     if (!order) return <div>Loading...</div>;
 
-   // const getManagerName = (manager: IUser | string | number | null): string | null => {
-   //      if (!manager) return null;
-   //
-   //      if (typeof manager === 'string' || typeof manager === 'number') {
-   //          return manager.toString();
-   //      }
-   //
-   //      if ('profile' in manager && manager.profile) {
-   //          return `${manager.profile.name} ${manager.profile.surname}`;
-   //      }
-   //
-   //      return null;
-   //  };
-
-
     return (
         <div style={{ padding: '20px' }}>
             <Typography variant="h5" gutterBottom>

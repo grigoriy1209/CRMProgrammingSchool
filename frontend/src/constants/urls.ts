@@ -25,6 +25,7 @@ const urls = {
         base: application,
         byId: (orderId: number): string => `application/${orderId}`,
         update:(orderId: number): string => `application/${orderId}`,
+        getComments:(orderId: number): string => `application/${orderId}/comments`,
         addComment: (orderId: number): string => `application/${orderId}/add_comment`,
     },
     group: {

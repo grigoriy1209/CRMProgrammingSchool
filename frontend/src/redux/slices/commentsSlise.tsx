@@ -27,7 +27,7 @@ const getComments = createAsyncThunk<IComments[], number>(
 );
 
 
-const addComment = createAsyncThunk<IComments, { orderId: number; comment: string }>(
+const addComment = createAsyncThunk<IComments, { orderId: number; comment: string, status:string }>(
     'commentsSlice/addComment',
     async ({ orderId, comment }, { rejectWithValue }) => {
         try {
@@ -53,7 +53,6 @@ const commentsSlice = createSlice({
                 state.error = action.payload as string || "Unknown error";
             })
             .addCase(addComment.fulfilled, (state, action: PayloadAction<IComments>) => {
-                state.comments.push(action.payload);
                 state.error = null;
             })
             .addCase(addComment.rejected, (state, action) => {

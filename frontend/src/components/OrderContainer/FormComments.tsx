@@ -1,23 +1,22 @@
-import React, { FormEvent, useState } from 'react';
+import { FC, FormEvent, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks';
 import dayjs from 'dayjs';
 import { commentActions } from '../../redux/slices/commentsSlise';
 import { orderActions } from "../../redux/slices/ordersSlice";
-import {getManagerName} from "../../services/managerNameService";
-
+import { getManagerName } from "../../services/managerNameService";
 
 interface FormCommentsProps {
     orderId: number;
 }
 
-const FormComments: React.FC<FormCommentsProps> = ({ orderId }) => {
+const FormComments: FC<FormCommentsProps> = ({ orderId }) => {
     const dispatch = useAppDispatch();
     const [comment, setComment] = useState('');
 
     const { user } = useAppSelector(state => state.users);
+    const comments = useAppSelector(state => state.comments.comments);
     const orderInfo = useAppSelector(state => state.orders.orderInfo);
 
-    const comments = orderInfo?.comments || [];
     const managerId = user?.id;
 
     const isCommentAllowed =
@@ -32,15 +31,18 @@ const FormComments: React.FC<FormCommentsProps> = ({ orderId }) => {
         const currentStatus = orderInfo?.status;
         const newStatus = (!currentStatus || currentStatus === 'New') ? 'InWork' : currentStatus;
 
+        // Додаємо коментар
         await dispatch(commentActions.addComment({
             orderId,
             comment: comment.trim(),
-            // status: newStatus,
+            status: newStatus,
         }));
 
         setComment('');
-        dispatch(commentActions.getComments(orderId));
-        dispatch(orderActions.getById(orderId.toString()));
+
+        // Оновлюємо коментарі та саму заявку (orderInfo)
+        await dispatch(commentActions.getComments(orderId));
+        await dispatch(orderActions.getById(orderId.toString()));
     };
 
     return (
@@ -50,11 +52,11 @@ const FormComments: React.FC<FormCommentsProps> = ({ orderId }) => {
                     <ul className="space-y-2">
                         {comments.map(({ id, manager, created_at, comment }) => (
                             <li key={id} className="border p-2 rounded">
-                                <p><strong>Автор:</strong> {getManagerName(manager) || null}</p>
+                                <p><strong>Author:</strong> {getManagerName(manager) || '—'}</p>
                                 <p>
-                                    <strong>Дата:</strong> {created_at ? dayjs(created_at).format('YYYY-MM-DD HH:mm') : '—'}
+                                    <strong>Date:</strong> {created_at ? dayjs(created_at).format('YYYY-MM-DD HH:mm') : '—'}
                                 </p>
-                                <p><strong>Текст:</strong> {comment || '—'}</p>
+                                <p><strong>Comment:</strong> {comment || '—'}</p>
                             </li>
                         ))}
                     </ul>
@@ -85,3 +87,4 @@ const FormComments: React.FC<FormCommentsProps> = ({ orderId }) => {
 };
 
 export { FormComments };
+
