@@ -19,10 +19,9 @@ import {
     TableRow,
     Typography
 } from "@mui/material";
-import {format} from "date-fns";
 import {OrderInfo} from "./OrderInfo";
 import {IOrder} from "../../interfaces";
-import {ManagerName} from "./ManagerName";
+import { format } from "date-fns";
 
 interface IColumn {
     key: keyof IOrder | 'manager';
@@ -32,9 +31,7 @@ interface IColumn {
 const OrdersList: FC = () => {
     const dispatch = useAppDispatch();
     const location = useLocation();
-
-    const orders = useAppSelector((state) => state.orders.orders);
-    const error = useAppSelector((state) => state.orders.error);
+    const {orders, error} = useAppSelector(state => state.orders);
 
     const [expandedOrderId, setExpandedOrderId] = useState<number | null>(null);
 
@@ -44,13 +41,13 @@ const OrdersList: FC = () => {
     };
 
     useEffect(() => {
-        const pageUrl = getPageFromUrl(location.search);
-        dispatch(orderActions.getAll(pageUrl));
+        const page = getPageFromUrl(location.search);
+        dispatch(orderActions.getAll(page));
     }, [dispatch, location.search]);
 
-    if (error) {
-        return <Typography variant="h6" color="error">Error: {error}</Typography>;
-    }
+    const toggleExpanded = (id: number) => {
+        setExpandedOrderId(prev => (prev === id ? null : id));
+    };
 
     const columns: IColumn[] = [
         {key: "id", label: "ID"},
@@ -69,10 +66,47 @@ const OrdersList: FC = () => {
         {key: "created_at", label: "Created At"},
         {key: "manager", label: "Manager"},
     ];
+    const renderCell = (order: IOrder, col: IColumn) => {
+        const key = col.key;
 
-    const handleRowClick = (orderId: number) => {
-        setExpandedOrderId(prev => (prev === orderId ? null : orderId));
+        if (key === "manager") {
+            const manager = order.manager;
+
+            if (manager === null) return null;
+
+            if (typeof manager === "string" || typeof manager === "number") {
+                return manager.toString();
+            }
+
+            if (typeof manager === "object") {
+                const profile = (manager as any).profile;
+
+                if (profile && profile.name && profile.surname) {
+                    return `${profile.name} ${profile.surname}`;
+                }
+
+                if ('name' in manager && 'surname' in manager) {
+                    return `${manager.name} ${manager.surname}`;
+                }
+
+                return JSON.stringify(manager);
+            }
+
+            return null;
+        }
+
+        const value = order[key as keyof IOrder];
+
+        if (value === null) return "null";
+
+        if (key === 'created_at' && typeof value === 'string') {
+            return format(new Date(value), "yyyy-MM-dd");
+        }
+
+        return value.toString();
     };
+
+
 
     return (
         <Box sx={{width: "100%", backgroundColor: "#f5f5f5", p: 2}}>
@@ -92,36 +126,14 @@ const OrdersList: FC = () => {
                             {orders.map((order) => (
                                 <React.Fragment key={order.id}>
                                     <TableRow
-                                        onClick={() => handleRowClick(order.id)}
+                                        onClick={() => toggleExpanded(order.id)}
                                         style={{cursor: "pointer"}}
                                     >
-                                        {columns.map((col) => {
-                                            if (col.key === 'created_at' && typeof order.created_at === 'string') {
-                                                return (
-                                                    <TableCell key={col.key}>
-                                                        {format(new Date(order.created_at), "yyyy-MM-dd HH:mm")}
-                                                    </TableCell>
-                                                );
-                                            }
-
-                                            if (col.key === 'manager') {
-                                                return (
-                                                    <TableCell key={col.key}>
-                                                        <ManagerName manager={order.manager} />
-                                                    </TableCell>
-                                                );
-                                            }
-
-                                            // звичайне значення (без менеджера)
-                                            const value = order[col.key as keyof IOrder];
-
-                                            return (
-                                                <TableCell key={col.key}>
-                                                    {typeof value === 'string' || typeof value === 'number' ? value : ''}
-                                                </TableCell>
-                                            );
-                                        })}
-
+                                        {columns.map((col) => (
+                                            <TableCell key={col.key}>
+                                                {renderCell(order, col)}
+                                            </TableCell>
+                                        ))}
                                     </TableRow>
 
                                     {expandedOrderId === order.id && (
@@ -133,7 +145,7 @@ const OrdersList: FC = () => {
                                                         aria-controls={`order-${order.id}-content`}
                                                         id={`order-${order.id}-header`}
                                                     >
-                                                        <Typography variant="subtitle2">{order.id} </Typography>
+                                                        <Typography variant="subtitle2">{order.id}</Typography>
                                                     </AccordionSummary>
                                                     <AccordionDetails>
                                                         <OrderInfo
@@ -151,15 +163,12 @@ const OrdersList: FC = () => {
                     </Table>
                 </TableContainer>
             ) : (
-                <Typography variant="h6" sx={{marginTop: 2}}>
+                <Typography variant="h6" sx={{mt: 2}}>
                     No orders found
                 </Typography>
-            )
-            }
+            )}
             <Pagination/>
         </Box>
-    )
-        ;
+    );
 };
-
-export {OrdersList};
+export {OrdersList}

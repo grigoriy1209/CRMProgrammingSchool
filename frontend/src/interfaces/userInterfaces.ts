@@ -7,7 +7,7 @@ export interface IUser {
     created_at: string;
     updated_at: string;
     last_login: string;
-    profile:IProfile
+    profile:IProfile | null
 }
 export interface IProfile {
     id: number;

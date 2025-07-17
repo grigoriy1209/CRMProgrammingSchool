@@ -1,4 +1,3 @@
-from django.db import transaction
 from django.db.transaction import atomic
 
 from rest_framework import serializers
@@ -6,6 +5,15 @@ from rest_framework import serializers
 from apps.all_users_info.users.models import ProfileModel, UserModel
 
 from core.services.email_service import EmailService
+
+
+class ManagerSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(source='profile.name')
+    surname = serializers.CharField(source='profile.surname')
+
+    class Meta:
+        model = UserModel
+        fields = ('id', 'name', 'surname')
 
 
 class ProfileSerializer(serializers.ModelSerializer):
@@ -22,7 +30,6 @@ class UserSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'email',
-            # 'password',
             'is_active',
             'is_staff',
             'is_superuser',

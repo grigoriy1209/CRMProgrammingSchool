@@ -27,8 +27,8 @@ const OrderInfo: FC<IProps> = ({ order, onClose }) => {
 
     return (
         <Box sx={{ position: "relative", p: 2 }}>
-            <Typography><strong>msg:</strong> {currentOrder.msg || "—"}</Typography>
-            <Typography><strong>utm:</strong> {currentOrder.utm || "—"}</Typography>
+            <Typography><strong>msg:</strong> {currentOrder.msg??' null'}</Typography>
+            <Typography><strong>utm:</strong> {currentOrder.utm ??' null'}</Typography>
 
             <FormComments orderId={order.id} />
 

@@ -2,15 +2,18 @@ import {IComments} from "../interfaces/commentInterface";
 import {apiServices} from "./apiServices";
 
 const commentService = {
-    getComments:async (orgId: string): Promise<IComments[]> => {
-         const response = await apiServices.get(`/comments?${orgId}`);
-         return response.data;
-    },
-    addComment: async (orderId:string, comment:string):Promise<IComments> => {
-        const response = await apiServices.post(`/comments?${orderId}/`,{comment:comment});
+    getComments: async (orderId: string): Promise<IComments[]> => {
+        const response = await apiServices.get('/comments', {
+            params: { orderId }
+        });
         return response.data;
-    }
-}
-export {
-    commentService
-}
+    },
+    addComment: async (orderId: string, comment: string): Promise<IComments> => {
+        const response = await apiServices.post('/comments/', {
+            orderId,
+            comment,
+        });
+        return response.data;
+    },
+};
+export {commentService}

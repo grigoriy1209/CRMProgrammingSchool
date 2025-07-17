@@ -1,8 +1,9 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { IOrder } from "../interfaces";
+import {IOrder, IUser} from "../interfaces";
 import { orderServices } from "../services/orderServices";
 import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
+import {getManagerName} from "../services/managerNameService";
 
 const OrderDetailsPage = () => {
     const { id } = useParams();
@@ -17,6 +18,21 @@ const OrderDetailsPage = () => {
     }, [id]);
 
     if (!order) return <div>Loading...</div>;
+
+   // const getManagerName = (manager: IUser | string | number | null): string | null => {
+   //      if (!manager) return null;
+   //
+   //      if (typeof manager === 'string' || typeof manager === 'number') {
+   //          return manager.toString();
+   //      }
+   //
+   //      if ('profile' in manager && manager.profile) {
+   //          return `${manager.profile.name} ${manager.profile.surname}`;
+   //      }
+   //
+   //      return null;
+   //  };
+
 
     return (
         <div style={{ padding: '20px' }}>
@@ -90,7 +106,7 @@ const OrderDetailsPage = () => {
                         </TableRow>
                         <TableRow>
                             <TableCell>Manager</TableCell>
-                            <TableCell>{order.manager}</TableCell>
+                            <TableCell>{getManagerName(order.manager)}</TableCell>
                         </TableRow>
                     </TableBody>
                 </Table>

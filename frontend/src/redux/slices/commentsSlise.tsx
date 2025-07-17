@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { IComments } from "../../interfaces/commentInterface";
-import { commentService } from "../../services/commentService";
+import {commentService} from "../../services/commentService";
+
 
 interface IState {
     comments: IComments[];
@@ -12,7 +13,7 @@ const initialState: IState = {
     error: null,
 };
 
-// Отримати всі коментарі до заявки
+
 const getComments = createAsyncThunk<IComments[], number>(
     'commentsSlice/getComments',
     async (orderId, { rejectWithValue }) => {
@@ -25,7 +26,7 @@ const getComments = createAsyncThunk<IComments[], number>(
     }
 );
 
-// Додати коментар
+
 const addComment = createAsyncThunk<IComments, { orderId: number; comment: string }>(
     'commentsSlice/addComment',
     async ({ orderId, comment }, { rejectWithValue }) => {
@@ -37,7 +38,7 @@ const addComment = createAsyncThunk<IComments, { orderId: number; comment: strin
     }
 );
 
-// Slice
+
 const commentsSlice = createSlice({
     name: "commentsSlice",
     initialState,
@@ -52,7 +53,7 @@ const commentsSlice = createSlice({
                 state.error = action.payload as string || "Unknown error";
             })
             .addCase(addComment.fulfilled, (state, action: PayloadAction<IComments>) => {
-                state.comments.push(action.payload); // просто додаємо новий коментар
+                state.comments.push(action.payload);
                 state.error = null;
             })
             .addCase(addComment.rejected, (state, action) => {
